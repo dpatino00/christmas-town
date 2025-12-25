@@ -17,7 +17,9 @@
         lightsMode: 'off', // off, on, chase, warm
         treeDecorations: 0,
         giftsOpened: [],
+        giftsRevealed: 0, // New: track how many gifts have appeared
         snowmanWaved: false,
+        snowmanTransformed: false, // Track if snowman has been transformed to image
         secretFound: false,
         discoveries: 0,
         snowIntensity: 'medium' // light, medium, heavy
@@ -67,8 +69,7 @@
         resetBtn: document.getElementById('reset-btn'),
         warmthFill: document.querySelector('.warmth-meter__fill'),
         counterText: document.getElementById('counter-text'),
-        gift1: document.getElementById('gift-1'),
-        gift2: document.getElementById('gift-2'),
+        giftsContainer: document.getElementById('gifts-container'),
         snowman: document.getElementById('snowman'),
         secretSpot: document.getElementById('secret-spot'),
         secretReveal: document.getElementById('secret-reveal')
@@ -273,34 +274,124 @@
     }
 
     // ========================================
-    // Gift Interactions
+    // Enhanced Gift System (Progressive Reveals)
     // ========================================
+    const giftReveals = [
+        { emoji: '💝', className: 'heart', message: 'A gift from the heart!' },
+        { emoji: '⭐', className: 'star', message: 'You\'re my star!' },
+        { emoji: '✨', className: 'sparkle', message: 'You make life sparkle!' },
+        { emoji: '🌟', className: 'star', message: 'Shining bright together!' },
+        { emoji: '💎', className: 'sparkle', message: 'You\'re precious to me!' }
+    ];
+
+    function revealNextGift() {
+        const nextGiftIndex = state.giftsRevealed || 0;
+        if (nextGiftIndex < 5) {
+            const giftElement = document.getElementById(`gift-${nextGiftIndex + 1}`);
+            if (giftElement && giftElement.style.opacity === '0') {
+                giftElement.classList.add('gift-revealing');
+                giftElement.style.opacity = '1';
+                state.giftsRevealed = nextGiftIndex + 1;
+                saveState();
+            }
+        }
+    }
+
     function openGift(giftId) {
+        const giftIndex = parseInt(giftId.split('-')[1]) - 1;
         const gift = document.getElementById(giftId);
+
         if (!state.giftsOpened.includes(giftId)) {
             state.giftsOpened.push(giftId);
-            gift.classList.add('opened');
+            const reveal = giftReveals[giftIndex];
 
-            // Change emoji after opening
-            setTimeout(() => {
-                gift.textContent = '🎄';
-            }, 500);
+            gift.classList.add('opened');
+            gift.classList.add(`gift-opened-${reveal.className}`);
+
+            // Keep as gift emoji - don't change appearance
+            // setTimeout(() => {
+            //     gift.textContent = reveal.emoji;
+            // }, 300);
+
+            // Show message briefly
+            showGiftMessage(reveal.message);
 
             incrementDiscoveries();
             saveState();
         } else {
-            // Already opened - just wiggle
+            // Already opened - show message again and animate
+            const reveal = giftReveals[giftIndex];
+            showGiftMessage(reveal.message);
+            
             gift.style.animation = 'none';
             gift.offsetHeight;
             gift.style.animation = 'unwrap 0.3s ease';
         }
     }
 
+    function showGiftMessage(message) {
+        // Create temporary message element
+        const messageEl = document.createElement('div');
+        messageEl.className = 'gift-message';
+        messageEl.textContent = message;
+        messageEl.style.cssText = `
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 170, 68, 0.9);
+            color: #1a1510;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            z-index: 150;
+            animation: message-fade 2s ease forwards;
+            pointer-events: none;
+        `;
+
+        // Add keyframes for message animation
+        if (!document.querySelector('#gift-message-styles')) {
+            const style = document.createElement('style');
+            style.id = 'gift-message-styles';
+            style.textContent = `
+                @keyframes message-fade {
+                    0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+                    20% { opacity: 1; transform: translateX(-50%) translateY(0); }
+                    80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+                    100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        document.body.appendChild(messageEl);
+
+        // Remove after animation
+        setTimeout(() => {
+            if (messageEl.parentNode) {
+                messageEl.parentNode.removeChild(messageEl);
+            }
+        }, 2000);
+    }
+
     function restoreGifts() {
+        // Show revealed gifts
+        for (let i = 1; i <= (state.giftsRevealed || 0); i++) {
+            const gift = document.getElementById(`gift-${i}`);
+            if (gift) {
+                gift.style.opacity = '1';
+            }
+        }
+
+        // Update opened gifts
         state.giftsOpened.forEach(giftId => {
+            const giftIndex = parseInt(giftId.split('-')[1]) - 1;
             const gift = document.getElementById(giftId);
             if (gift) {
-                gift.textContent = '🎄';
+                const reveal = giftReveals[giftIndex];
+                // Keep original gift emoji - don't change appearance
+                // gift.textContent = reveal.emoji;
                 gift.classList.add('opened');
             }
         });
@@ -310,13 +401,28 @@
     // Snowman Interaction
     // ========================================
     function waveToSnowman() {
-        elements.snowman.classList.add('waving');
-        setTimeout(() => elements.snowman.classList.remove('waving'), 500);
+        if (!state.snowmanTransformed) {
+            // First click - transform to image
+            const snowmanImg = document.createElement('img');
+            snowmanImg.src = './assets/asnow.png';
+            snowmanImg.alt = 'Snowman';
+            snowmanImg.className = 'snowman-image';
+            elements.snowman.appendChild(snowmanImg);
 
-        if (!state.snowmanWaved) {
-            state.snowmanWaved = true;
-            incrementDiscoveries();
+            setTimeout(() => {
+                elements.snowman.classList.add('transformed');
+            }, 50);
+
+            state.snowmanTransformed = true;
+            if (!state.snowmanWaved) {
+                state.snowmanWaved = true;
+                incrementDiscoveries();
+            }
             saveState();
+        } else {
+            // Subsequent clicks - wave animation
+            elements.snowman.classList.add('waving');
+            setTimeout(() => elements.snowman.classList.remove('waving'), 500);
         }
     }
 
@@ -360,6 +466,12 @@
         if (warmthLevel > 0) {
             elements.scene.classList.add('warm-' + Math.min(warmthLevel, 4));
         }
+
+        // Reveal gifts based on discoveries
+        const giftsToReveal = Math.min(Math.floor(state.discoveries / 2), 5);
+        if (giftsToReveal > (state.giftsRevealed || 0)) {
+            setTimeout(() => revealNextGift(), 500);
+        }
     }
 
     function updateCounter() {
@@ -402,6 +514,16 @@
         // Gifts
         restoreGifts();
 
+        // Snowman
+        if (state.snowmanTransformed) {
+            const snowmanImg = document.createElement('img');
+            snowmanImg.src = './assets/asnow.png';
+            snowmanImg.alt = 'Snowman';
+            snowmanImg.className = 'snowman-image';
+            elements.snowman.appendChild(snowmanImg);
+            elements.snowman.classList.add('transformed');
+        }
+
         // Snow intensity
         elements.scene.classList.add('snow-' + state.snowIntensity);
 
@@ -443,9 +565,11 @@
             if (e.key === 'Enter' || e.key === ' ') decorateTree();
         });
 
-        // Gifts
-        elements.gift1?.addEventListener('click', () => openGift('gift-1'));
-        elements.gift2?.addEventListener('click', () => openGift('gift-2'));
+        // Gifts (now 5 gifts)
+        for (let i = 1; i <= 5; i++) {
+            const gift = document.getElementById(`gift-${i}`);
+            gift?.addEventListener('click', () => openGift(`gift-${i}`));
+        }
 
         // Snowman
         elements.snowman?.addEventListener('click', waveToSnowman);

@@ -322,7 +322,7 @@
             // Already opened - show message again and animate
             const reveal = giftReveals[giftIndex];
             showGiftMessage(reveal.message);
-            
+
             gift.style.animation = 'none';
             gift.offsetHeight;
             gift.style.animation = 'unwrap 0.3s ease';

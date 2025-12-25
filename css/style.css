@@ -4,1234 +4,1385 @@
 
 /* CSS Variables for theming and warmth progression */
 :root {
-  /* Base colors */
-  --sky-dark: #0a0a1a;
-  --sky-purple: #1a1030;
-  --snow-white: #f0f5ff;
-  --snow-shadow: #c5d5e8;
-  
-  /* Cabin colors */
-  --cabin-dark: #1a1510;
-  --cabin-wood: #3d2817;
-  --cabin-trim: #5a3d2b;
-  --roof-dark: #252015;
-  
-  /* Warm colors (activated by interactions) */
-  --warm-glow: #ffaa44;
-  --warm-glow-soft: rgba(255, 170, 68, 0.3);
-  --fire-orange: #ff6622;
-  --fire-red: #ff3311;
-  
-  /* Light colors */
-  --light-red: #ff4444;
-  --light-green: #44ff44;
-  --light-blue: #4488ff;
-  --light-yellow: #ffff44;
-  --light-purple: #ff44ff;
-  --light-white: #ffffff;
-  
-  /* UI colors */
-  --text-light: #e8e0d5;
-  
-  /* Warmth level (0-1, controlled by JS) */
-  --warmth: 0;
-  
-  /* Animation speeds */
-  --snow-speed: 10s;
-  --glow-pulse: 2s;
+    /* Base colors */
+    --sky-dark: #0a0a1a;
+    --sky-purple: #1a1030;
+    --snow-white: #f0f5ff;
+    --snow-shadow: #c5d5e8;
+
+    /* Cabin colors */
+    --cabin-dark: #1a1510;
+    --cabin-wood: #3d2817;
+    --cabin-trim: #5a3d2b;
+    --roof-dark: #252015;
+
+    /* Warm colors (activated by interactions) */
+    --warm-glow: #ffaa44;
+    --warm-glow-soft: rgba(255, 170, 68, 0.3);
+    --fire-orange: #ff6622;
+    --fire-red: #ff3311;
+
+    /* Light colors */
+    --light-red: #ff4444;
+    --light-green: #44ff44;
+    --light-blue: #4488ff;
+    --light-yellow: #ffff44;
+    --light-purple: #ff44ff;
+    --light-white: #ffffff;
+
+    /* UI colors */
+    --text-light: #e8e0d5;
+
+    /* Warmth level (0-1, controlled by JS) */
+    --warmth: 0;
+
+    /* Animation speeds */
+    --snow-speed: 10s;
+    --glow-pulse: 2s;
 }
 
 /* Reset & Base */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-html, body {
-  height: 100%;
-  overflow: hidden;
+html,
+body {
+    height: 100%;
+    overflow: hidden;
 }
 
 body {
-  font-family: 'Georgia', serif;
-  background: var(--sky-dark);
-  color: var(--text-light);
+    font-family: 'Georgia', serif;
+    background: var(--sky-dark);
+    color: var(--text-light);
 }
 
 /* ========================================
    Scene Container
    ======================================== */
 .scene {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  background: linear-gradient(
-    to bottom,
-    var(--sky-dark) 0%,
-    var(--sky-purple) 40%,
-    #1a1525 70%,
-    #151520 100%
-  );
-  cursor: default;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(to bottom,
+            var(--sky-dark) 0%,
+            var(--sky-purple) 40%,
+            #1a1525 70%,
+            #151520 100%);
+    cursor: default;
 }
 
 /* Layer system - each layer stacks via z-index */
 .layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
 }
 
-.layer > * {
-  pointer-events: auto;
+.layer>* {
+    pointer-events: auto;
 }
 
-.layer--sky { z-index: 1; }
-.layer--snow { z-index: 10; pointer-events: none; }
-.layer--horizon { z-index: 2; }
-.layer--cabin { z-index: 5; }
-.layer--foreground { z-index: 6; }
-.layer--overlay { z-index: 100; pointer-events: none; }
+.layer--sky {
+    z-index: 1;
+}
+
+.layer--snow {
+    z-index: 10;
+    pointer-events: none;
+}
+
+.layer--horizon {
+    z-index: 2;
+}
+
+.layer--cabin {
+    z-index: 5;
+}
+
+.layer--foreground {
+    z-index: 6;
+}
+
+.layer--overlay {
+    z-index: 100;
+    pointer-events: none;
+}
 
 /* ========================================
    Sky & Stars
    ======================================== */
 .stars {
-  position: absolute;
-  width: 100%;
-  height: 60%;
-  background-image: 
-    radial-gradient(2px 2px at 20px 30px, #fff, transparent),
-    radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
-    radial-gradient(1px 1px at 90px 40px, #fff, transparent),
-    radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.9), transparent),
-    radial-gradient(1px 1px at 160px 120px, #fff, transparent),
-    radial-gradient(2px 2px at 200px 50px, #fff, transparent),
-    radial-gradient(1px 1px at 250px 160px, rgba(255,255,255,0.7), transparent),
-    radial-gradient(2px 2px at 300px 90px, #fff, transparent),
-    radial-gradient(1px 1px at 350px 200px, #fff, transparent),
-    radial-gradient(2px 2px at 400px 60px, rgba(255,255,255,0.8), transparent),
-    radial-gradient(1px 1px at 450px 140px, #fff, transparent),
-    radial-gradient(2px 2px at 500px 30px, #fff, transparent),
-    radial-gradient(1px 1px at 550px 180px, rgba(255,255,255,0.9), transparent),
-    radial-gradient(2px 2px at 600px 100px, #fff, transparent),
-    radial-gradient(1px 1px at 650px 220px, #fff, transparent),
-    radial-gradient(2px 2px at 700px 70px, rgba(255,255,255,0.7), transparent),
-    radial-gradient(1px 1px at 750px 150px, #fff, transparent),
-    radial-gradient(2px 2px at 800px 40px, #fff, transparent);
-  background-repeat: repeat;
-  background-size: 800px 250px;
-  animation: twinkle 8s ease-in-out infinite alternate;
+    position: absolute;
+    width: 100%;
+    height: 60%;
+    background-image:
+        radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.8), transparent),
+        radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+        radial-gradient(2px 2px at 130px 80px, rgba(255, 255, 255, 0.9), transparent),
+        radial-gradient(1px 1px at 160px 120px, #fff, transparent),
+        radial-gradient(2px 2px at 200px 50px, #fff, transparent),
+        radial-gradient(1px 1px at 250px 160px, rgba(255, 255, 255, 0.7), transparent),
+        radial-gradient(2px 2px at 300px 90px, #fff, transparent),
+        radial-gradient(1px 1px at 350px 200px, #fff, transparent),
+        radial-gradient(2px 2px at 400px 60px, rgba(255, 255, 255, 0.8), transparent),
+        radial-gradient(1px 1px at 450px 140px, #fff, transparent),
+        radial-gradient(2px 2px at 500px 30px, #fff, transparent),
+        radial-gradient(1px 1px at 550px 180px, rgba(255, 255, 255, 0.9), transparent),
+        radial-gradient(2px 2px at 600px 100px, #fff, transparent),
+        radial-gradient(1px 1px at 650px 220px, #fff, transparent),
+        radial-gradient(2px 2px at 700px 70px, rgba(255, 255, 255, 0.7), transparent),
+        radial-gradient(1px 1px at 750px 150px, #fff, transparent),
+        radial-gradient(2px 2px at 800px 40px, #fff, transparent);
+    background-repeat: repeat;
+    background-size: 800px 250px;
+    animation: twinkle 8s ease-in-out infinite alternate;
 }
 
 @keyframes twinkle {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
 }
 
 .moon {
-  position: absolute;
-  top: 8%;
-  right: 15%;
-  width: 60px;
-  height: 60px;
-  background: radial-gradient(circle at 30% 30%, #fffef0, #e8e4d4);
-  border-radius: 50%;
-  box-shadow: 
-    0 0 20px rgba(255, 255, 240, 0.4),
-    0 0 60px rgba(255, 255, 240, 0.2);
+    position: absolute;
+    top: 8%;
+    right: 15%;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle at 30% 30%, #fffef0, #e8e4d4);
+    border-radius: 50%;
+    box-shadow:
+        0 0 20px rgba(255, 255, 240, 0.4),
+        0 0 60px rgba(255, 255, 240, 0.2);
 }
 
 /* ========================================
    Mountains / Horizon
    ======================================== */
 .mountains {
-  position: absolute;
-  bottom: 30%;
-  left: 0;
-  width: 100%;
-  height: 200px;
-  background: 
-    linear-gradient(135deg, transparent 40%, #151520 40%, #151520 42%, transparent 42%),
-    linear-gradient(225deg, transparent 40%, #1a1825 40%, #1a1825 42%, transparent 42%),
-    linear-gradient(145deg, transparent 50%, #12121a 50%);
-  background-size: 300px 200px, 250px 180px, 400px 200px;
-  background-position: 0 bottom, 150px bottom, 300px bottom;
-  background-repeat: repeat-x;
-  opacity: 0.6;
+    position: absolute;
+    bottom: 30%;
+    left: 0;
+    width: 100%;
+    height: 200px;
+    background:
+        linear-gradient(135deg, transparent 40%, #151520 40%, #151520 42%, transparent 42%),
+        linear-gradient(225deg, transparent 40%, #1a1825 40%, #1a1825 42%, transparent 42%),
+        linear-gradient(145deg, transparent 50%, #12121a 50%);
+    background-size: 300px 200px, 250px 180px, 400px 200px;
+    background-position: 0 bottom, 150px bottom, 300px bottom;
+    background-repeat: repeat-x;
+    opacity: 0.6;
 }
 
 /* ========================================
    Ground / Snow
    ======================================== */
 .ground {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 25%;
-  background: linear-gradient(
-    to bottom,
-    var(--snow-shadow) 0%,
-    var(--snow-white) 30%,
-    var(--snow-white) 100%
-  );
-  border-radius: 100% 100% 0 0 / 30px 30px 0 0;
-  box-shadow: 
-    inset 0 10px 30px rgba(0, 0, 0, 0.1),
-    0 -5px 20px rgba(200, 220, 255, 0.3);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 25%;
+    background: linear-gradient(to bottom,
+            var(--snow-shadow) 0%,
+            var(--snow-white) 30%,
+            var(--snow-white) 100%);
+    border-radius: 100% 100% 0 0 / 30px 30px 0 0;
+    box-shadow:
+        inset 0 10px 30px rgba(0, 0, 0, 0.1),
+        0 -5px 20px rgba(200, 220, 255, 0.3);
 }
 
 /* Snow drifts */
 .ground::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 10%;
-  width: 30%;
-  height: 60%;
-  background: var(--snow-white);
-  border-radius: 100% 100% 0 0 / 50px;
-  box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.05);
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    width: 30%;
+    height: 60%;
+    background: var(--snow-white);
+    border-radius: 100% 100% 0 0 / 50px;
+    box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.05);
 }
 
 .ground::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  right: 5%;
-  width: 25%;
-  height: 50%;
-  background: var(--snow-white);
-  border-radius: 100% 100% 0 0 / 40px;
-  box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.05);
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 5%;
+    width: 25%;
+    height: 50%;
+    background: var(--snow-white);
+    border-radius: 100% 100% 0 0 / 40px;
+    box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.05);
 }
 
 /* ========================================
    Cabin
    ======================================== */
 .cabin {
-  position: absolute;
-  bottom: 22%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 320px;
-  height: 220px;
+    position: absolute;
+    bottom: 22%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    height: 220px;
 }
 
 /* Cabin Body */
 .cabin__body {
-  position: absolute;
-  bottom: 0;
-  left: 20px;
-  width: 280px;
-  height: 140px;
-  background: linear-gradient(
-    to bottom,
-    var(--cabin-wood) 0%,
-    var(--cabin-dark) 100%
-  );
-  border-radius: 4px;
-  box-shadow: 
-    inset 0 2px 0 var(--cabin-trim),
-    0 10px 30px rgba(0, 0, 0, 0.5);
+    position: absolute;
+    bottom: 0;
+    left: 20px;
+    width: 280px;
+    height: 140px;
+    background: linear-gradient(to bottom,
+            var(--cabin-wood) 0%,
+            var(--cabin-dark) 100%);
+    border-radius: 4px;
+    box-shadow:
+        inset 0 2px 0 var(--cabin-trim),
+        0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 3;
 }
 
 /* Wood texture lines */
 .cabin__body::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0px,
-    transparent 18px,
-    rgba(0, 0, 0, 0.15) 18px,
-    rgba(0, 0, 0, 0.15) 20px
-  );
-  border-radius: 4px;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(to bottom,
+            transparent 0px,
+            transparent 18px,
+            rgba(0, 0, 0, 0.15) 18px,
+            rgba(0, 0, 0, 0.15) 20px);
+    border-radius: 4px;
 }
 
 /* Cabin Roof */
 .cabin__roof {
-  position: absolute;
-  bottom: 130px;
-  left: 0;
-  width: 320px;
-  height: 100px;
+    position: absolute;
+    bottom: 130px;
+    left: 20px;
+    width: 280px;
+    height: 100px;
+    overflow: visible;
+    z-index: 2;
 }
 
 .cabin__roof::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 0;
-  border-left: 160px solid transparent;
-  border-right: 160px solid transparent;
-  border-bottom: 90px solid var(--roof-dark);
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 140px solid transparent;
+    border-right: 140px solid transparent;
+    border-bottom: 80px solid var(--roof-dark);
 }
 
-/* Snow on roof */
-.cabin__roof::after {
-  content: '';
-  position: absolute;
-  bottom: 85px;
-  left: 10px;
-  width: 300px;
-  height: 20px;
-  background: var(--snow-white);
-  border-radius: 0 0 50% 50% / 0 0 20px 20px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-}
+/* No snow on sloped roof - removed for cleaner look */
 
 /* Chimney */
 .cabin__chimney {
-  position: absolute;
-  bottom: 60px;
-  right: 60px;
-  width: 35px;
-  height: 50px;
-  background: linear-gradient(to right, #4a3525, #3d2817);
-  border-radius: 2px 2px 0 0;
-  z-index: 2;
+    position: absolute;
+    bottom: 140px;
+    right: 70px;
+    width: 35px;
+    height: 90px;
+    background: linear-gradient(to right, #4a3525, #3d2817);
+    border-radius: 2px 2px 0 0;
+    z-index: 1;
 }
 
 .cabin__chimney::before {
-  content: '';
-  position: absolute;
-  top: -8px;
-  left: -4px;
-  width: 43px;
-  height: 12px;
-  background: var(--snow-white);
-  border-radius: 4px;
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: -4px;
+    width: 43px;
+    height: 12px;
+    background: var(--snow-white);
+    border-radius: 4px;
 }
 
 /* Smoke from chimney */
 .cabin__smoke {
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 20px;
-  height: 20px;
-  opacity: 0;
-  transition: opacity 0.5s ease;
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
 }
 
 .cabin__smoke.active {
-  opacity: 1;
+    opacity: 1;
 }
 
 .cabin__smoke::before,
 .cabin__smoke::after {
-  content: '';
-  position: absolute;
-  background: rgba(200, 200, 200, 0.4);
-  border-radius: 50%;
-  animation: smoke 3s ease-out infinite;
+    content: '';
+    position: absolute;
+    background: rgba(200, 200, 200, 0.4);
+    border-radius: 50%;
+    animation: smoke 3s ease-out infinite;
 }
 
 .cabin__smoke::before {
-  width: 15px;
-  height: 15px;
-  left: 0;
-  animation-delay: 0s;
+    width: 15px;
+    height: 15px;
+    left: 0;
+    animation-delay: 0s;
 }
 
 .cabin__smoke::after {
-  width: 12px;
-  height: 12px;
-  left: 8px;
-  animation-delay: 1s;
+    width: 12px;
+    height: 12px;
+    left: 8px;
+    animation-delay: 1s;
 }
 
 @keyframes smoke {
-  0% {
-    transform: translateY(0) scale(1);
-    opacity: 0.4;
-  }
-  100% {
-    transform: translateY(-40px) scale(2);
-    opacity: 0;
-  }
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 0.4;
+    }
+
+    100% {
+        transform: translateY(-40px) scale(2);
+        opacity: 0;
+    }
 }
 
 /* ========================================
    Windows
    ======================================== */
 .cabin__window {
-  position: absolute;
-  cursor: pointer;
-  transition: transform 0.2s ease;
+    position: absolute;
+    cursor: pointer;
+    transition: transform 0.2s ease;
 }
 
 .cabin__window:hover {
-  transform: scale(1.02);
+    transform: scale(1.02);
 }
 
 .cabin__window:active {
-  transform: scale(0.98);
+    transform: scale(0.98);
 }
 
 /* Main Window */
 .cabin__window--main {
-  top: 25px;
-  left: 30px;
-  width: 90px;
-  height: 70px;
-  background: #1a2030;
-  border: 4px solid var(--cabin-trim);
-  border-radius: 4px;
-  overflow: hidden;
+    top: 25px;
+    left: 30px;
+    width: 90px;
+    height: 70px;
+    background: #1a2030;
+    border: 4px solid var(--cabin-trim);
+    border-radius: 4px;
+    overflow: hidden;
 }
 
 .cabin__window-glow {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-    ellipse at center,
-    var(--warm-glow) 0%,
-    var(--warm-glow-soft) 50%,
-    transparent 70%
-  );
-  opacity: 0;
-  transition: opacity 0.5s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center,
+            var(--warm-glow) 0%,
+            var(--warm-glow-soft) 50%,
+            transparent 70%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
 }
 
 .cabin__window.lit .cabin__window-glow {
-  opacity: 1;
-  animation: flicker 4s ease-in-out infinite;
+    opacity: 1;
+    animation: flicker 4s ease-in-out infinite;
 }
 
 @keyframes flicker {
-  0%, 100% { opacity: 1; }
-  92% { opacity: 1; }
-  93% { opacity: 0.8; }
-  94% { opacity: 1; }
-  96% { opacity: 0.9; }
-  97% { opacity: 1; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    92% {
+        opacity: 1;
+    }
+
+    93% {
+        opacity: 0.8;
+    }
+
+    94% {
+        opacity: 1;
+    }
+
+    96% {
+        opacity: 0.9;
+    }
+
+    97% {
+        opacity: 1;
+    }
 }
 
 /* Window panes */
 .cabin__window-frame {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 4px;
-  padding: 4px;
-  z-index: 2;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 4px;
+    padding: 4px;
+    z-index: 2;
 }
 
 .cabin__window-pane {
-  background: rgba(100, 140, 180, 0.2);
-  border: 1px solid var(--cabin-trim);
+    background: rgba(100, 140, 180, 0.2);
+    border: 1px solid var(--cabin-trim);
 }
 
 .cabin__window.lit .cabin__window-pane {
-  background: rgba(255, 200, 100, 0.3);
+    background: rgba(255, 200, 100, 0.3);
 }
 
 /* Silhouette inside window */
 .cabin__silhouette {
-  position: absolute;
-  bottom: 5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 25px;
-  height: 30px;
-  background: transparent;
-  opacity: 0;
-  transition: opacity 0.8s ease 0.3s;
-  z-index: 1;
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 25px;
+    height: 30px;
+    background: transparent;
+    opacity: 0;
+    transition: opacity 0.8s ease 0.3s;
+    z-index: 1;
 }
 
 .cabin__window.lit .cabin__silhouette {
-  opacity: 1;
-  background: radial-gradient(ellipse at center bottom, rgba(0,0,0,0.6) 0%, transparent 70%);
+    opacity: 1;
+    background: radial-gradient(ellipse at center bottom, rgba(0, 0, 0, 0.6) 0%, transparent 70%);
 }
 
 /* Side Window */
 .cabin__window--side {
-  top: 40px;
-  right: 40px;
-  width: 50px;
-  height: 50px;
-  background: #1a2030;
-  border: 3px solid var(--cabin-trim);
-  border-radius: 50%;
-  overflow: hidden;
+    top: 40px;
+    right: 40px;
+    width: 50px;
+    height: 50px;
+    background: #1a2030;
+    border: 3px solid var(--cabin-trim);
+    border-radius: 50%;
+    overflow: hidden;
 }
 
 .cabin__window--side .cabin__window-glow {
-  background: radial-gradient(
-    circle at center,
-    var(--warm-glow) 0%,
-    transparent 70%
-  );
+    background: radial-gradient(circle at center,
+            var(--warm-glow) 0%,
+            transparent 70%);
 }
 
 /* ========================================
    Door
    ======================================== */
 .cabin__door {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 50px;
-  height: 80px;
-  background: linear-gradient(
-    to right,
-    #2a1a10 0%,
-    #3d2515 50%,
-    #2a1a10 100%
-  );
-  border: 3px solid var(--cabin-trim);
-  border-bottom: none;
-  border-radius: 4px 4px 0 0;
-  cursor: pointer;
-  transition: transform 0.2s ease;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 80px;
+    background: linear-gradient(to right,
+            #2a1a10 0%,
+            #3d2515 50%,
+            #2a1a10 100%);
+    border: 3px solid var(--cabin-trim);
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    transition: transform 0.2s ease;
 }
 
 .cabin__door:hover {
-  transform: translateX(-50%) scale(1.02);
+    transform: translateX(-50%) scale(1.02);
 }
 
 .cabin__door:active {
-  transform: translateX(-50%) scale(0.98);
+    transform: translateX(-50%) scale(0.98);
 }
 
 /* Door handle */
 .cabin__door::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  right: 8px;
-  width: 8px;
-  height: 8px;
-  background: #8b7355;
-  border-radius: 50%;
-  box-shadow: inset 1px 1px 2px rgba(0,0,0,0.5);
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background: #8b7355;
+    border-radius: 50%;
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 /* Wreath on door */
 .cabin__wreath {
-  position: absolute;
-  top: 15px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 25px;
-  height: 25px;
-  border: 5px solid #2d5a2d;
-  border-radius: 50%;
-  box-shadow: 
-    inset 0 0 5px rgba(0,0,0,0.3),
-    0 2px 4px rgba(0,0,0,0.2);
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 25px;
+    height: 25px;
+    border: 5px solid #2d5a2d;
+    border-radius: 50%;
+    box-shadow:
+        inset 0 0 5px rgba(0, 0, 0, 0.3),
+        0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .cabin__wreath::before {
-  content: '';
-  position: absolute;
-  top: -3px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 8px;
-  height: 10px;
-  background: #cc2222;
-  border-radius: 2px;
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 10px;
+    background: #cc2222;
+    border-radius: 2px;
 }
 
 /* ========================================
    String Lights
    ======================================== */
 .cabin__lights {
-  position: absolute;
-  bottom: 130px;
-  left: 30px;
-  width: 260px;
-  height: 30px;
-  cursor: pointer;
+    position: absolute;
+    bottom: 130px;
+    left: 30px;
+    width: 260px;
+    height: 30px;
+    cursor: pointer;
+    z-index: 4;
 }
 
 /* Wire */
 .cabin__lights::before {
-  content: '';
-  position: absolute;
-  top: 5px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: #222;
-  border-radius: 1px;
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #222;
+    border-radius: 1px;
 }
 
 .light {
-  position: absolute;
-  top: 0;
-  width: 10px;
-  height: 14px;
-  background: #444;
-  border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%;
-  opacity: 0.5;
-  transition: all 0.3s ease;
-  box-shadow: none;
+    position: absolute;
+    top: 0;
+    width: 10px;
+    height: 14px;
+    background: #444;
+    border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+    box-shadow: none;
 }
 
 /* Position lights along wire */
-.light--1 { left: 5%; }
-.light--2 { left: 15%; }
-.light--3 { left: 25%; }
-.light--4 { left: 35%; }
-.light--5 { left: 45%; }
-.light--6 { left: 55%; }
-.light--7 { left: 65%; }
-.light--8 { left: 75%; }
-.light--9 { left: 85%; }
-.light--10 { left: 95%; }
+.light--1 {
+    left: 5%;
+}
+
+.light--2 {
+    left: 15%;
+}
+
+.light--3 {
+    left: 25%;
+}
+
+.light--4 {
+    left: 35%;
+}
+
+.light--5 {
+    left: 45%;
+}
+
+.light--6 {
+    left: 55%;
+}
+
+.light--7 {
+    left: 65%;
+}
+
+.light--8 {
+    left: 75%;
+}
+
+.light--9 {
+    left: 85%;
+}
+
+.light--10 {
+    left: 95%;
+}
 
 /* Lights ON state */
 .cabin__lights.on .light {
-  opacity: 1;
-  animation: glow-pulse var(--glow-pulse) ease-in-out infinite;
+    opacity: 1;
+    animation: glow-pulse var(--glow-pulse) ease-in-out infinite;
 }
 
 .cabin__lights.on .light--1,
-.cabin__lights.on .light--6 { 
-  background: var(--light-red);
-  box-shadow: 0 0 10px var(--light-red), 0 0 20px var(--light-red);
-  animation-delay: 0s;
+.cabin__lights.on .light--6 {
+    background: var(--light-red);
+    box-shadow: 0 0 10px var(--light-red), 0 0 20px var(--light-red);
+    animation-delay: 0s;
 }
+
 .cabin__lights.on .light--2,
-.cabin__lights.on .light--7 { 
-  background: var(--light-green);
-  box-shadow: 0 0 10px var(--light-green), 0 0 20px var(--light-green);
-  animation-delay: 0.2s;
+.cabin__lights.on .light--7 {
+    background: var(--light-green);
+    box-shadow: 0 0 10px var(--light-green), 0 0 20px var(--light-green);
+    animation-delay: 0.2s;
 }
+
 .cabin__lights.on .light--3,
-.cabin__lights.on .light--8 { 
-  background: var(--light-blue);
-  box-shadow: 0 0 10px var(--light-blue), 0 0 20px var(--light-blue);
-  animation-delay: 0.4s;
+.cabin__lights.on .light--8 {
+    background: var(--light-blue);
+    box-shadow: 0 0 10px var(--light-blue), 0 0 20px var(--light-blue);
+    animation-delay: 0.4s;
 }
+
 .cabin__lights.on .light--4,
-.cabin__lights.on .light--9 { 
-  background: var(--light-yellow);
-  box-shadow: 0 0 10px var(--light-yellow), 0 0 20px var(--light-yellow);
-  animation-delay: 0.6s;
+.cabin__lights.on .light--9 {
+    background: var(--light-yellow);
+    box-shadow: 0 0 10px var(--light-yellow), 0 0 20px var(--light-yellow);
+    animation-delay: 0.6s;
 }
+
 .cabin__lights.on .light--5,
-.cabin__lights.on .light--10 { 
-  background: var(--light-purple);
-  box-shadow: 0 0 10px var(--light-purple), 0 0 20px var(--light-purple);
-  animation-delay: 0.8s;
+.cabin__lights.on .light--10 {
+    background: var(--light-purple);
+    box-shadow: 0 0 10px var(--light-purple), 0 0 20px var(--light-purple);
+    animation-delay: 0.8s;
 }
 
 /* Chase mode */
 .cabin__lights.chase .light {
-  animation: chase-light 2s ease-in-out infinite;
+    animation: chase-light 2s ease-in-out infinite;
 }
 
-.cabin__lights.chase .light--1 { animation-delay: 0s; }
-.cabin__lights.chase .light--2 { animation-delay: 0.15s; }
-.cabin__lights.chase .light--3 { animation-delay: 0.3s; }
-.cabin__lights.chase .light--4 { animation-delay: 0.45s; }
-.cabin__lights.chase .light--5 { animation-delay: 0.6s; }
-.cabin__lights.chase .light--6 { animation-delay: 0.75s; }
-.cabin__lights.chase .light--7 { animation-delay: 0.9s; }
-.cabin__lights.chase .light--8 { animation-delay: 1.05s; }
-.cabin__lights.chase .light--9 { animation-delay: 1.2s; }
-.cabin__lights.chase .light--10 { animation-delay: 1.35s; }
+.cabin__lights.chase .light--1 {
+    animation-delay: 0s;
+}
+
+.cabin__lights.chase .light--2 {
+    animation-delay: 0.15s;
+}
+
+.cabin__lights.chase .light--3 {
+    animation-delay: 0.3s;
+}
+
+.cabin__lights.chase .light--4 {
+    animation-delay: 0.45s;
+}
+
+.cabin__lights.chase .light--5 {
+    animation-delay: 0.6s;
+}
+
+.cabin__lights.chase .light--6 {
+    animation-delay: 0.75s;
+}
+
+.cabin__lights.chase .light--7 {
+    animation-delay: 0.9s;
+}
+
+.cabin__lights.chase .light--8 {
+    animation-delay: 1.05s;
+}
+
+.cabin__lights.chase .light--9 {
+    animation-delay: 1.2s;
+}
+
+.cabin__lights.chase .light--10 {
+    animation-delay: 1.35s;
+}
 
 /* Warm white mode */
 .cabin__lights.warm .light {
-  background: #ffddaa !important;
-  box-shadow: 0 0 8px #ffcc88, 0 0 15px #ffaa66 !important;
+    background: #ffddaa !important;
+    box-shadow: 0 0 8px #ffcc88, 0 0 15px #ffaa66 !important;
 }
 
 @keyframes glow-pulse {
-  0%, 100% { 
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% { 
-    opacity: 0.7;
-    transform: scale(0.95);
-  }
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(0.95);
+    }
 }
 
 @keyframes chase-light {
-  0%, 20%, 100% { 
-    opacity: 0.3;
-    transform: scale(0.9);
-  }
-  10% { 
-    opacity: 1;
-    transform: scale(1.1);
-  }
+
+    0%,
+    20%,
+    100% {
+        opacity: 0.3;
+        transform: scale(0.9);
+    }
+
+    10% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
 }
 
 /* ========================================
    Space Tree / Antenna
    ======================================== */
 .tree {
-  position: absolute;
-  bottom: 20%;
-  right: 15%;
-  width: 80px;
-  height: 140px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
+    position: absolute;
+    bottom: 20%;
+    right: 15%;
+    width: 80px;
+    height: 140px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
 }
 
 .tree:hover {
-  transform: scale(1.02);
+    transform: scale(1.02);
 }
 
 .tree:active {
-  transform: scale(0.98);
+    transform: scale(0.98);
 }
 
 /* Tree trunk */
 .tree__trunk {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 15px;
-  height: 30px;
-  background: linear-gradient(to right, #3a2515, #5a3d25, #3a2515);
-  border-radius: 2px;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 15px;
+    height: 30px;
+    background: linear-gradient(to right, #3a2515, #5a3d25, #3a2515);
+    border-radius: 2px;
 }
 
 /* Tree branches (triangular layers) */
 .tree__branches {
-  position: absolute;
-  bottom: 25px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
 }
 
 .tree__branch {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: solid transparent;
-  border-right: solid transparent;
-  border-bottom: solid #1a4a1a;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: solid transparent;
+    border-right: solid transparent;
+    border-bottom: solid #1a4a1a;
 }
 
 .tree__branch::after {
-  content: '';
-  position: absolute;
-  top: 2px;
-  left: 50%;
-  transform: translateX(-50%);
-  border-left: solid transparent;
-  border-right: solid transparent;
-  border-bottom: solid #0d2d0d;
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: solid transparent;
+    border-right: solid transparent;
+    border-bottom: solid #0d2d0d;
 }
 
 .tree__branch--1 {
-  bottom: 70px;
-  border-left-width: 25px;
-  border-right-width: 25px;
-  border-bottom-width: 35px;
+    bottom: 70px;
+    border-left-width: 25px;
+    border-right-width: 25px;
+    border-bottom-width: 35px;
 }
+
 .tree__branch--1::after {
-  border-left-width: 20px;
-  border-right-width: 20px;
-  border-bottom-width: 30px;
+    border-left-width: 20px;
+    border-right-width: 20px;
+    border-bottom-width: 30px;
 }
 
 .tree__branch--2 {
-  bottom: 40px;
-  border-left-width: 32px;
-  border-right-width: 32px;
-  border-bottom-width: 40px;
+    bottom: 40px;
+    border-left-width: 32px;
+    border-right-width: 32px;
+    border-bottom-width: 40px;
 }
+
 .tree__branch--2::after {
-  border-left-width: 27px;
-  border-right-width: 27px;
-  border-bottom-width: 35px;
+    border-left-width: 27px;
+    border-right-width: 27px;
+    border-bottom-width: 35px;
 }
 
 .tree__branch--3 {
-  bottom: 5px;
-  border-left-width: 40px;
-  border-right-width: 40px;
-  border-bottom-width: 45px;
+    bottom: 5px;
+    border-left-width: 40px;
+    border-right-width: 40px;
+    border-bottom-width: 45px;
 }
+
 .tree__branch--3::after {
-  border-left-width: 35px;
-  border-right-width: 35px;
-  border-bottom-width: 40px;
+    border-left-width: 35px;
+    border-right-width: 35px;
+    border-bottom-width: 40px;
 }
 
 /* Tree star */
 .tree__star {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 24px;
-  opacity: 0.3;
-  transition: all 0.5s ease;
-  filter: grayscale(1);
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    opacity: 0.3;
+    transition: all 0.5s ease;
+    filter: grayscale(1);
 }
 
 .tree__star::before {
-  content: '⭐';
+    content: '⭐';
 }
 
 .tree.decorated .tree__star {
-  opacity: 1;
-  filter: grayscale(0) drop-shadow(0 0 10px gold);
-  animation: star-glow 2s ease-in-out infinite;
+    opacity: 1;
+    filter: grayscale(0) drop-shadow(0 0 10px gold);
+    animation: star-glow 2s ease-in-out infinite;
 }
 
 @keyframes star-glow {
-  0%, 100% { transform: translateX(-50%) scale(1); }
-  50% { transform: translateX(-50%) scale(1.1); }
+
+    0%,
+    100% {
+        transform: translateX(-50%) scale(1);
+    }
+
+    50% {
+        transform: translateX(-50%) scale(1.1);
+    }
 }
 
 /* Tree ornaments container */
 .tree__ornaments {
-  position: absolute;
-  top: 30px;
-  left: 0;
-  width: 100%;
-  height: 100px;
+    position: absolute;
+    top: 30px;
+    left: 0;
+    width: 100%;
+    height: 100px;
 }
 
 .ornament {
-  position: absolute;
-  font-size: 14px;
-  opacity: 0;
-  transform: scale(0);
-  transition: all 0.3s ease;
+    position: absolute;
+    font-size: 14px;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease;
 }
 
 .ornament.visible {
-  opacity: 1;
-  transform: scale(1);
+    opacity: 1;
+    transform: scale(1);
 }
 
-.ornament--1 { top: 15px; left: 35%; }
-.ornament--2 { top: 35px; left: 55%; }
-.ornament--3 { top: 45px; left: 25%; }
-.ornament--4 { top: 60px; left: 60%; }
-.ornament--5 { top: 70px; left: 35%; }
-.ornament--6 { top: 55px; left: 45%; }
+.ornament--1 {
+    top: 15px;
+    left: 35%;
+}
+
+.ornament--2 {
+    top: 35px;
+    left: 55%;
+}
+
+.ornament--3 {
+    top: 45px;
+    left: 25%;
+}
+
+.ornament--4 {
+    top: 60px;
+    left: 60%;
+}
+
+.ornament--5 {
+    top: 70px;
+    left: 35%;
+}
+
+.ornament--6 {
+    top: 55px;
+    left: 45%;
+}
 
 /* ========================================
    Foreground Objects
    ======================================== */
 .object {
-  position: absolute;
-  font-size: 28px;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-  filter: drop-shadow(0 3px 3px rgba(0,0,0,0.3));
+    position: absolute;
+    font-size: 28px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.3));
 }
 
 .object:hover {
-  transform: scale(1.15) rotate(-5deg);
+    transform: scale(1.15) rotate(-5deg);
 }
 
 .object:active {
-  transform: scale(0.95);
+    transform: scale(0.95);
 }
 
 .object--gift {
-  bottom: 22%;
+    bottom: 22%;
 }
 
 #gift-1 {
-  left: 20%;
+    left: 20%;
 }
 
 #gift-2 {
-  left: 30%;
-  font-size: 22px;
+    left: 30%;
+    font-size: 22px;
 }
 
 .object--snowman {
-  bottom: 21%;
-  left: 8%;
-  font-size: 40px;
+    bottom: 21%;
+    left: 8%;
+    font-size: 40px;
 }
 
 .object.opened {
-  animation: unwrap 0.5s ease forwards;
+    animation: unwrap 0.5s ease forwards;
 }
 
 @keyframes unwrap {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.3) rotate(10deg); }
-  100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.3) rotate(10deg);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 .object.waving {
-  animation: wave 0.5s ease;
+    animation: wave 0.5s ease;
 }
 
 @keyframes wave {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-15deg); }
-  75% { transform: rotate(15deg); }
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(-15deg);
+    }
+
+    75% {
+        transform: rotate(15deg);
+    }
 }
 
 /* Secret spot */
 .secret-spot {
-  position: absolute;
-  bottom: 24%;
-  left: 42%;
-  font-size: 16px;
-  opacity: 0.3;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  animation: sparkle 3s ease-in-out infinite;
+    position: absolute;
+    bottom: 24%;
+    left: 42%;
+    font-size: 16px;
+    opacity: 0.3;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: sparkle 3s ease-in-out infinite;
 }
 
 .secret-spot:hover {
-  opacity: 1;
-  transform: scale(1.5);
+    opacity: 1;
+    transform: scale(1.5);
 }
 
 @keyframes sparkle {
-  0%, 100% { opacity: 0.2; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(1.2); }
+
+    0%,
+    100% {
+        opacity: 0.2;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(1.2);
+    }
 }
 
 /* ========================================
    Snowflakes
    ======================================== */
 .snowflake {
-  position: absolute;
-  top: -20px;
-  color: white;
-  font-size: 1em;
-  text-shadow: 0 0 5px rgba(255,255,255,0.8);
-  animation: fall linear infinite;
-  pointer-events: none;
-  opacity: 0.8;
+    position: absolute;
+    top: -20px;
+    color: white;
+    font-size: 1em;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+    animation: fall linear infinite;
+    pointer-events: none;
+    opacity: 0.8;
 }
 
 @keyframes fall {
-  0% {
-    transform: translateY(-10px) rotate(0deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.8;
-  }
-  90% {
-    opacity: 0.8;
-  }
-  100% {
-    transform: translateY(100vh) rotate(360deg);
-    opacity: 0;
-  }
+    0% {
+        transform: translateY(-10px) rotate(0deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.8;
+    }
+
+    90% {
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
 }
 
 /* Snow intensity variations */
 .scene.snow-light .snowflake {
-  animation-duration: 12s;
+    animation-duration: 12s;
 }
 
 .scene.snow-medium .snowflake {
-  animation-duration: 8s;
+    animation-duration: 8s;
 }
 
 .scene.snow-heavy .snowflake {
-  animation-duration: 5s;
+    animation-duration: 5s;
 }
 
 /* ========================================
    UI Controls
    ======================================== */
 .controls {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  display: flex;
-  gap: 10px;
-  z-index: 200;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 200;
 }
 
 .control-btn {
-  width: 44px;
-  height: 44px;
-  border: none;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  font-size: 20px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .control-btn:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.1);
 }
 
 .control-btn:active {
-  transform: scale(0.95);
+    transform: scale(0.95);
 }
 
 /* ========================================
    Warmth Meter
    ======================================== */
 .warmth-meter {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  width: 8px;
-  height: 100px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  overflow: hidden;
-  z-index: 200;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 8px;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    z-index: 200;
 }
 
 .warmth-meter__fill {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 0%;
-  background: linear-gradient(
-    to top,
-    var(--fire-red) 0%,
-    var(--fire-orange) 50%,
-    var(--warm-glow) 100%
-  );
-  border-radius: 4px;
-  transition: height 0.5s ease;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background: linear-gradient(to top,
+            var(--fire-red) 0%,
+            var(--fire-orange) 50%,
+            var(--warm-glow) 100%);
+    border-radius: 4px;
+    transition: height 0.5s ease;
 }
 
 /* ========================================
    Interaction Counter
    ======================================== */
 .interaction-counter {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  padding: 8px 16px;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  font-size: 14px;
-  color: var(--text-light);
-  z-index: 200;
-  opacity: 0.7;
-  transition: opacity 0.3s ease;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 8px 16px;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    font-size: 14px;
+    color: var(--text-light);
+    z-index: 200;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
 }
 
 .interaction-counter:hover {
-  opacity: 1;
+    opacity: 1;
 }
 
 /* ========================================
    Secret Reveal Overlay
    ======================================== */
 #secret-reveal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 30px 40px;
-  background: rgba(20, 15, 30, 0.95);
-  backdrop-filter: blur(20px);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  text-align: center;
-  max-width: 400px;
-  pointer-events: auto;
-  animation: reveal-in 0.5s ease;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 30px 40px;
+    background: rgba(20, 15, 30, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    max-width: 400px;
+    pointer-events: auto;
+    animation: reveal-in 0.5s ease;
 }
 
 #secret-reveal:empty {
-  display: none;
+    display: none;
 }
 
 @keyframes reveal-in {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
 }
 
 #secret-reveal h2 {
-  margin-bottom: 15px;
-  color: var(--warm-glow);
+    margin-bottom: 15px;
+    color: var(--warm-glow);
 }
 
 #secret-reveal p {
-  margin-bottom: 20px;
-  line-height: 1.6;
+    margin-bottom: 20px;
+    line-height: 1.6;
 }
 
 #secret-reveal button {
-  padding: 10px 25px;
-  background: var(--warm-glow);
-  border: none;
-  border-radius: 25px;
-  color: #1a1510;
-  font-weight: bold;
-  cursor: pointer;
-  transition: transform 0.2s ease;
+    padding: 10px 25px;
+    background: var(--warm-glow);
+    border: none;
+    border-radius: 25px;
+    color: #1a1510;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease;
 }
 
 #secret-reveal button:hover {
-  transform: scale(1.05);
+    transform: scale(1.05);
 }
 
 /* ========================================
    Scene Warmth Progression
    ======================================== */
 .scene.warm-1 {
-  background: linear-gradient(
-    to bottom,
-    #0d0d1d 0%,
-    #1d1235 40%,
-    #1d1528 70%,
-    #181522 100%
-  );
+    background: linear-gradient(to bottom,
+            #0d0d1d 0%,
+            #1d1235 40%,
+            #1d1528 70%,
+            #181522 100%);
 }
 
 .scene.warm-2 {
-  background: linear-gradient(
-    to bottom,
-    #100d1d 0%,
-    #201538 40%,
-    #20182a 70%,
-    #1a1525 100%
-  );
+    background: linear-gradient(to bottom,
+            #100d1d 0%,
+            #201538 40%,
+            #20182a 70%,
+            #1a1525 100%);
 }
 
 .scene.warm-3 {
-  background: linear-gradient(
-    to bottom,
-    #15101f 0%,
-    #25183d 40%,
-    #251a2d 70%,
-    #1d1828 100%
-  );
+    background: linear-gradient(to bottom,
+            #15101f 0%,
+            #25183d 40%,
+            #251a2d 70%,
+            #1d1828 100%);
 }
 
 .scene.warm-4 {
-  background: linear-gradient(
-    to bottom,
-    #1a1322 0%,
-    #2a1b42 40%,
-    #2a1d30 70%,
-    #201a2a 100%
-  );
+    background: linear-gradient(to bottom,
+            #1a1322 0%,
+            #2a1b42 40%,
+            #2a1d30 70%,
+            #201a2a 100%);
 }
 
 /* ========================================
    Responsive Adjustments
    ======================================== */
 @media (max-width: 768px) {
-  .cabin {
-    width: 250px;
-    height: 180px;
-    bottom: 24%;
-  }
-  
-  .cabin__body {
-    width: 220px;
-    height: 110px;
-  }
-  
-  .cabin__roof {
-    width: 250px;
-  }
-  
-  .cabin__roof::before {
-    border-left-width: 125px;
-    border-right-width: 125px;
-    border-bottom-width: 70px;
-  }
-  
-  .tree {
-    right: 8%;
-    width: 60px;
-    height: 100px;
-  }
-  
-  .object {
-    font-size: 24px;
-  }
-  
-  .object--snowman {
-    font-size: 32px;
-  }
+    .cabin {
+        width: 250px;
+        height: 180px;
+        bottom: 24%;
+    }
+
+    .cabin__body {
+        width: 220px;
+        height: 110px;
+    }
+
+    .cabin__roof {
+        width: 250px;
+    }
+
+    .cabin__roof::before {
+        border-left-width: 125px;
+        border-right-width: 125px;
+        border-bottom-width: 70px;
+    }
+
+    .tree {
+        right: 8%;
+        width: 60px;
+        height: 100px;
+    }
+
+    .object {
+        font-size: 24px;
+    }
+
+    .object--snowman {
+        font-size: 32px;
+    }
 }
 
 @media (max-width: 480px) {
-  .cabin {
-    width: 200px;
-    height: 150px;
-  }
-  
-  .cabin__body {
-    width: 180px;
-    height: 90px;
-    left: 10px;
-  }
-  
-  .cabin__roof {
-    width: 200px;
-  }
-  
-  .cabin__roof::before {
-    border-left-width: 100px;
-    border-right-width: 100px;
-    border-bottom-width: 60px;
-  }
-  
-  .cabin__window--main {
-    width: 60px;
-    height: 50px;
-  }
-  
-  .cabin__lights {
-    width: 180px;
-  }
-  
-  .warmth-meter {
-    display: none;
-  }
+    .cabin {
+        width: 200px;
+        height: 150px;
+    }
+
+    .cabin__body {
+        width: 180px;
+        height: 90px;
+        left: 10px;
+    }
+
+    .cabin__roof {
+        width: 200px;
+    }
+
+    .cabin__roof::before {
+        border-left-width: 100px;
+        border-right-width: 100px;
+        border-bottom-width: 60px;
+    }
+
+    .cabin__window--main {
+        width: 60px;
+        height: 50px;
+    }
+
+    .cabin__lights {
+        width: 180px;
+    }
+
+    .warmth-meter {
+        display: none;
+    }
 }

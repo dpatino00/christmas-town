@@ -1,0 +1,23 @@
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# AI/Bot files
+.llamabot/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Dependencies (if added later)
+node_modules/
+
+# Build outputs (if added later)
+dist/
+build/
+
+# Logs
+*.log

@@ -19,6 +19,13 @@
         }
     }
 
+    function createStyledElement(tag, className, cssText) {
+        const element = document.createElement(tag);
+        if (className) element.className = className;
+        if (cssText) element.style.cssText = cssText;
+        return element;
+    }
+
     // ========================================
     // State Management
     // ========================================
@@ -354,10 +361,7 @@
 
     function showGiftMessage(message) {
         // Create temporary message element
-        const messageEl = document.createElement('div');
-        messageEl.className = 'gift-message';
-        messageEl.textContent = message;
-        messageEl.style.cssText = `
+        const messageEl = createStyledElement('div', 'gift-message', `
             position: fixed;
             top: 30%;
             left: 50%;
@@ -371,7 +375,8 @@
             z-index: 150;
             animation: message-fade 2s ease forwards;
             pointer-events: none;
-        `;
+        `);
+        messageEl.textContent = message;
 
         // Add keyframes for message animation
         injectStyles('gift-message-styles', `
@@ -427,18 +432,16 @@
         showGiftMessage("Meet your new furry friend! 🐱");
 
         // Create cat element
-        const cat = document.createElement('div');
-        cat.id = 'adopted-cat';
-        cat.className = 'cat-sprite';
-        cat.innerHTML = '🐱';
-        cat.style.cssText = `
+        const cat = createStyledElement('div', 'cat-sprite', `
             position: absolute;
             bottom: 20px;
             right: -50px;
             font-size: 24px;
             z-index: 90;
             animation: cat-run-to-house 3s ease-in-out forwards;
-        `;
+        `);
+        cat.id = 'adopted-cat';
+        cat.innerHTML = '🐱';
 
         document.querySelector('.layer--foreground').appendChild(cat);
 
@@ -547,9 +550,7 @@
 
         if (mainWindow) {
             // Main cat body
-            const catShadow = document.createElement('div');
-            catShadow.className = 'cat-shadow';
-            catShadow.style.cssText = `
+            const catShadow = createStyledElement('div', 'cat-shadow', `
                 position: absolute;
                 bottom: 15px;
                 left: 20%;
@@ -559,11 +560,10 @@
                 border-radius: 50% 80% 80% 50% / 70% 70% 30% 30%;
                 animation: cat-shadow-walk 12s ease-in-out infinite;
                 opacity: 0.7;
-            `;
+            `);
 
             // Cat head (overlapping with body)
-            const catHead = document.createElement('div');
-            catHead.style.cssText = `
+            const catHead = createStyledElement('div', '', `
                 position: absolute;
                 top: -1px;
                 right: -5px;
@@ -571,11 +571,10 @@
                 height: 14px;
                 background: rgba(0, 0, 0, 0.5);
                 border-radius: 60% 40% 40% 60%;
-            `;
+            `);
 
             // Cat ears
-            const leftEar = document.createElement('div');
-            leftEar.style.cssText = `
+            const leftEar = createStyledElement('div', '', `
                 position: absolute;
                 top: -2px;
                 left: 2px;
@@ -584,10 +583,9 @@
                 background: rgba(0, 0, 0, 0.5);
                 border-radius: 50% 0 50% 0;
                 transform: rotate(-20deg);
-            `;
+            `);
 
-            const rightEar = document.createElement('div');
-            rightEar.style.cssText = `
+            const rightEar = createStyledElement('div', '', `
                 position: absolute;
                 top: -2px;
                 right: 2px;
@@ -596,11 +594,10 @@
                 background: rgba(0, 0, 0, 0.5);
                 border-radius: 0 50% 0 50%;
                 transform: rotate(20deg);
-            `;
+            `);
 
             // Cat tail (properly attached to body)
-            const catTail = document.createElement('div');
-            catTail.style.cssText = `
+            const catTail = createStyledElement('div', '', `
                 position: absolute;
                 top: 2px;
                 left: -8px;
@@ -611,11 +608,10 @@
                 transform: rotate(-20deg);
                 transform-origin: right center;
                 animation: tail-sway 3s ease-in-out infinite;
-            `;
+            `);
 
             // Tail tip for more realism
-            const tailTip = document.createElement('div');
-            tailTip.style.cssText = `
+            const tailTip = createStyledElement('div', '', `
                 position: absolute;
                 top: -1px;
                 left: -6px;
@@ -624,7 +620,7 @@
                 background: rgba(0, 0, 0, 0.3);
                 border-radius: 0 60% 60% 0;
                 transform: rotate(-10deg);
-            `;
+            `);
 
             catHead.appendChild(leftEar);
             catHead.appendChild(rightEar);
@@ -656,13 +652,18 @@
     // ========================================
     // Snowman Interaction
     // ========================================
+    function createSnowmanImage() {
+        const snowmanImg = document.createElement('img');
+        snowmanImg.src = './assets/asnow.png';
+        snowmanImg.alt = 'Snowman';
+        snowmanImg.className = 'snowman-image';
+        return snowmanImg;
+    }
+
     function waveToSnowman() {
         if (!state.snowmanTransformed) {
             // First click - transform to image
-            const snowmanImg = document.createElement('img');
-            snowmanImg.src = './assets/asnow.png';
-            snowmanImg.alt = 'Snowman';
-            snowmanImg.className = 'snowman-image';
+            const snowmanImg = createSnowmanImage();
             elements.snowman.appendChild(snowmanImg);
 
             setTimeout(() => {
@@ -772,10 +773,7 @@
 
         // Snowman
         if (state.snowmanTransformed) {
-            const snowmanImg = document.createElement('img');
-            snowmanImg.src = './assets/asnow.png';
-            snowmanImg.alt = 'Snowman';
-            snowmanImg.className = 'snowman-image';
+            const snowmanImg = createSnowmanImage();
             elements.snowman.appendChild(snowmanImg);
             elements.snowman.classList.add('transformed');
         }

@@ -179,18 +179,336 @@ body {
    ======================================== */
 .mountains {
     position: absolute;
-    bottom: 30%;
+    bottom: 25%;
     left: 0;
     width: 100%;
-    height: 200px;
-    background:
-        linear-gradient(135deg, transparent 40%, #151520 40%, #151520 42%, transparent 42%),
-        linear-gradient(225deg, transparent 40%, #1a1825 40%, #1a1825 42%, transparent 42%),
-        linear-gradient(145deg, transparent 50%, #12121a 50%);
-    background-size: 300px 200px, 250px 180px, 400px 200px;
-    background-position: 0 bottom, 150px bottom, 300px bottom;
-    background-repeat: repeat-x;
+    height: 180px;
     opacity: 0.6;
+    transition: opacity 3s ease;
+    overflow: hidden;
+}
+
+/* Continuous angular mountain range using polygon */
+.mountains::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: -10%;
+    width: 120%;
+    height: 100%;
+    background: linear-gradient(to bottom, #12121c 0%, #0e0e16 100%);
+    clip-path: polygon(0% 100%,
+            5% 60%,
+            8% 65%,
+            12% 45%,
+            16% 50%,
+            20% 30%,
+            24% 35%,
+            28% 55%,
+            32% 60%,
+            36% 40%,
+            40% 45%,
+            44% 25%,
+            48% 30%,
+            52% 50%,
+            56% 55%,
+            60% 35%,
+            64% 40%,
+            68% 20%,
+            72% 25%,
+            76% 45%,
+            80% 50%,
+            84% 35%,
+            88% 40%,
+            92% 55%,
+            96% 60%,
+            100% 45%,
+            100% 100%);
+}
+
+/* ========================================
+   Boston Skyline
+   ======================================== */
+.boston-skyline {
+    position: absolute;
+    bottom: 25%;
+    left: 0;
+    width: 100%;
+    height: 180px;
+    opacity: 0;
+    transition: opacity 3s ease;
+    pointer-events: none;
+}
+
+/* Background building cluster - creates depth and fills gaps */
+.boston-skyline__buildings {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background:
+        /* Left side cluster */
+        linear-gradient(to bottom, #0c0c14 0%, #141420 100%) 5% 100% / 20px 50px no-repeat,
+        linear-gradient(to bottom, #0a0a12 0%, #121218 100%) 9% 100% / 16px 65px no-repeat,
+        linear-gradient(to bottom, #0b0b13 0%, #131320 100%) 13% 100% / 22px 55px no-repeat,
+        linear-gradient(to bottom, #0d0d15 0%, #151520 100%) 17% 100% / 18px 72px no-repeat,
+        linear-gradient(to bottom, #0c0c14 0%, #141420 100%) 21% 100% / 14px 48px no-repeat,
+        /* Fill around main towers */
+        linear-gradient(to bottom, #0a0a12 0%, #121218 100%) 32% 100% / 15px 60px no-repeat,
+        linear-gradient(to bottom, #0b0b13 0%, #131320 100%) 42% 100% / 18px 55px no-repeat,
+        linear-gradient(to bottom, #0c0c14 0%, #141420 100%) 48% 100% / 14px 68px no-repeat,
+        /* Right side financial district */
+        linear-gradient(to bottom, #0d0d15 0%, #151520 100%) 55% 100% / 20px 58px no-repeat,
+        linear-gradient(to bottom, #0a0a12 0%, #121218 100%) 60% 100% / 16px 72px no-repeat,
+        linear-gradient(to bottom, #0b0b13 0%, #131320 100%) 72% 100% / 22px 52px no-repeat,
+        linear-gradient(to bottom, #0c0c14 0%, #141420 100%) 78% 100% / 18px 65px no-repeat,
+        linear-gradient(to bottom, #0d0d15 0%, #151520 100%) 84% 100% / 20px 48px no-repeat,
+        linear-gradient(to bottom, #0a0a12 0%, #121218 100%) 90% 100% / 16px 55px no-repeat,
+        linear-gradient(to bottom, #0b0b13 0%, #131320 100%) 95% 100% / 14px 42px no-repeat;
+}
+
+/* John Hancock Tower - tallest, slim with angled top */
+.boston-skyline__hancock {
+    position: absolute;
+    bottom: 0;
+    left: 26%;
+    width: 28px;
+    height: 145px;
+    background: linear-gradient(to right, #08080f 0%, #0e0e18 50%, #0a0a14 100%);
+    clip-path: polygon(0% 2%, 100% 0%, 100% 100%, 0% 100%);
+}
+
+.boston-skyline__hancock::before {
+    content: '';
+    position: absolute;
+    top: 2%;
+    left: 10%;
+    width: 80%;
+    height: 95%;
+    background:
+        repeating-linear-gradient(to bottom,
+            transparent 0px,
+            transparent 5px,
+            rgba(255, 180, 100, 0.06) 5px,
+            rgba(255, 180, 100, 0.06) 6px);
+}
+
+/* Prudential Tower - wider, chunky with antenna */
+.boston-skyline__prudential {
+    position: absolute;
+    bottom: 0;
+    left: 34%;
+    width: 35px;
+    height: 125px;
+    background: linear-gradient(to right, #0a0a14 0%, #101018 50%, #0c0c16 100%);
+}
+
+.boston-skyline__prudential::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 22px;
+    background: linear-gradient(to top, #101018, #181822);
+}
+
+.boston-skyline__prudential::after {
+    content: '';
+    position: absolute;
+    top: 4%;
+    left: 10%;
+    width: 80%;
+    height: 92%;
+    background:
+        repeating-linear-gradient(to bottom,
+            transparent 0px,
+            transparent 4px,
+            rgba(255, 180, 100, 0.05) 4px,
+            rgba(255, 180, 100, 0.05) 5px);
+}
+
+/* 111 Huntington Ave - domed top */
+.boston-skyline__huntington {
+    position: absolute;
+    bottom: 0;
+    left: 44%;
+    width: 24px;
+    height: 90px;
+    background: linear-gradient(to right, #09090f 0%, #0d0d17 50%, #0b0b15 100%);
+    border-radius: 6px 6px 0 0;
+}
+
+.boston-skyline__huntington::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 10px;
+    background: #0b0b15;
+    border-radius: 50% 50% 0 0;
+}
+
+/* One Boston Place */
+.boston-skyline__oneboston {
+    position: absolute;
+    bottom: 0;
+    right: 32%;
+    width: 22px;
+    height: 85px;
+    background: linear-gradient(to right, #0a0a12 0%, #0e0e18 50%, #0c0c16 100%);
+}
+
+/* Custom House Tower - with pointed top and clock */
+.boston-skyline__customhouse {
+    position: absolute;
+    bottom: 0;
+    right: 25%;
+    width: 20px;
+    height: 75px;
+    background: linear-gradient(to right, #0b0b13 0%, #0f0f19 50%, #0d0d17 100%);
+}
+
+.boston-skyline__customhouse::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 14px;
+    height: 16px;
+    background: #0d0d17;
+    clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+}
+
+.boston-skyline__customhouse::after {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(255, 220, 150, 0.18);
+    box-shadow: 0 0 5px rgba(255, 220, 150, 0.2);
+}
+
+/* Federal Reserve - angular */
+.boston-skyline__fedreserve {
+    position: absolute;
+    bottom: 0;
+    right: 18%;
+    width: 28px;
+    height: 68px;
+    background: linear-gradient(to right, #0c0c14 0%, #101018 50%, #0e0e16 100%);
+}
+
+/* Citgo Sign - iconic Kenmore landmark */
+.boston-skyline__citgo {
+    position: absolute;
+    bottom: 0;
+    left: 8%;
+    width: 40px;
+    height: 72px;
+}
+
+/* Building the sign sits on */
+.boston-skyline__citgo-building {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 45px;
+    background: linear-gradient(to right, #0a0a12 0%, #0d0d16 50%, #0b0b14 100%);
+}
+
+/* White square frame */
+.boston-skyline__citgo-frame {
+    position: absolute;
+    bottom: 42px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(255, 255, 255, 0.95);
+    box-shadow:
+        0 0 6px rgba(255, 255, 255, 0.6),
+        0 0 12px rgba(255, 255, 255, 0.3);
+}
+
+/* Red triangle sign - centered in square, upper half */
+.boston-skyline__citgo-outer {
+    position: absolute;
+    bottom: 51px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 20px solid #ff2a2a;
+    background: transparent;
+    filter: drop-shadow(0 0 6px rgba(255, 50, 50, 0.8));
+    z-index: 1;
+}
+
+/* Citgo sign glow animation */
+@keyframes citgo-glow {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 6px rgba(255, 50, 50, 0.8));
+    }
+
+    50% {
+        filter: drop-shadow(0 0 10px rgba(255, 60, 60, 1));
+    }
+}
+
+.scene.warm-4 .boston-skyline__citgo-outer {
+    animation: citgo-glow 2.5s ease-in-out infinite;
+}
+
+/* Window lights animation for warmth level 4 */
+@keyframes window-twinkle {
+
+    0%,
+    100% {
+        opacity: 0.05;
+    }
+
+    50% {
+        opacity: 0.1;
+    }
+}
+
+.scene.warm-4 .boston-skyline__hancock::before,
+.scene.warm-4 .boston-skyline__prudential::after {
+    animation: window-twinkle 4s ease-in-out infinite;
+}
+
+/* Skyline visibility based on warmth */
+.scene.warm-3 .mountains {
+    opacity: 0.3;
+}
+
+.scene.warm-3 .boston-skyline {
+    opacity: 0.5;
+}
+
+.scene.warm-4 .mountains {
+    opacity: 0;
+}
+
+.scene.warm-4 .boston-skyline {
+    opacity: 0.7;
 }
 
 /* ========================================
@@ -305,7 +623,59 @@ body {
     border-bottom: 80px solid var(--roof-dark);
 }
 
-/* No snow on sloped roof - removed for cleaner look */
+/* Snow on left roof edge */
+.cabin__roof-snow-left {
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 155px;
+    height: 14px;
+    background: linear-gradient(to bottom,
+            var(--snow-white) 0%,
+            rgba(255, 255, 255, 0.95) 100%);
+    transform-origin: 0% 0%;
+    transform: rotate(330deg);
+    box-shadow:
+        0 2px 6px rgba(255, 255, 255, 0.4),
+        inset 0 -1px 3px rgba(200, 230, 255, 0.3);
+    border-radius: 0 3px 0 0;
+    z-index: 5;
+}
+
+/* Snow on right roof edge */
+.cabin__roof-snow-right {
+    position: absolute;
+    bottom: -4px;
+    right: 0;
+    width: 155px;
+    height: 14px;
+    background: linear-gradient(to bottom,
+            var(--snow-white) 0%,
+            rgba(255, 255, 255, 0.95) 100%);
+    transform-origin: 100% 0%;
+    transform: rotate(-330deg);
+    box-shadow:
+        0 2px 6px rgba(255, 255, 255, 0.4),
+        inset 0 -1px 3px rgba(200, 230, 255, 0.3);
+    border-radius: 3px 0 0 0;
+    z-index: 5;
+}
+
+/* Snow cap at roof peak */
+.cabin__roof-snow-peak {
+    position: absolute;
+    top: 13px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 12px;
+    background: var(--snow-white);
+    border-radius: 50% 50% 30% 30%;
+    box-shadow:
+        0 2px 6px rgba(255, 255, 255, 0.4),
+        inset 0 -1px 3px rgba(200, 230, 255, 0.3);
+    z-index: 6;
+}
 
 /* Chimney */
 .cabin__chimney {
@@ -592,7 +962,7 @@ body {
    ======================================== */
 .cabin__lights {
     position: absolute;
-    bottom: 130px;
+    bottom: 112px;
     left: 30px;
     width: 260px;
     height: 30px;
@@ -630,16 +1000,45 @@ body {
     left: var(--light-offset);
 }
 
-.light--1 { --light-offset: 5%; }
-.light--2 { --light-offset: 15%; }
-.light--3 { --light-offset: 25%; }
-.light--4 { --light-offset: 35%; }
-.light--5 { --light-offset: 45%; }
-.light--6 { --light-offset: 55%; }
-.light--7 { --light-offset: 65%; }
-.light--8 { --light-offset: 75%; }
-.light--9 { --light-offset: 85%; }
-.light--10 { --light-offset: 95%; }
+.light--1 {
+    --light-offset: 5%;
+}
+
+.light--2 {
+    --light-offset: 15%;
+}
+
+.light--3 {
+    --light-offset: 25%;
+}
+
+.light--4 {
+    --light-offset: 35%;
+}
+
+.light--5 {
+    --light-offset: 45%;
+}
+
+.light--6 {
+    --light-offset: 55%;
+}
+
+.light--7 {
+    --light-offset: 65%;
+}
+
+.light--8 {
+    --light-offset: 75%;
+}
+
+.light--9 {
+    --light-offset: 85%;
+}
+
+.light--10 {
+    --light-offset: 95%;
+}
 
 /* Lights ON state */
 .cabin__lights.on .light {
@@ -683,16 +1082,45 @@ body {
     animation: chase-light 2s ease-in-out infinite;
 }
 
-.cabin__lights.chase .light--1 { animation-delay: 0s; }
-.cabin__lights.chase .light--2 { animation-delay: 0.15s; }
-.cabin__lights.chase .light--3 { animation-delay: 0.3s; }
-.cabin__lights.chase .light--4 { animation-delay: 0.45s; }
-.cabin__lights.chase .light--5 { animation-delay: 0.6s; }
-.cabin__lights.chase .light--6 { animation-delay: 0.75s; }
-.cabin__lights.chase .light--7 { animation-delay: 0.9s; }
-.cabin__lights.chase .light--8 { animation-delay: 1.05s; }
-.cabin__lights.chase .light--9 { animation-delay: 1.2s; }
-.cabin__lights.chase .light--10 { animation-delay: 1.35s; }
+.cabin__lights.chase .light--1 {
+    animation-delay: 0s;
+}
+
+.cabin__lights.chase .light--2 {
+    animation-delay: 0.15s;
+}
+
+.cabin__lights.chase .light--3 {
+    animation-delay: 0.3s;
+}
+
+.cabin__lights.chase .light--4 {
+    animation-delay: 0.45s;
+}
+
+.cabin__lights.chase .light--5 {
+    animation-delay: 0.6s;
+}
+
+.cabin__lights.chase .light--6 {
+    animation-delay: 0.75s;
+}
+
+.cabin__lights.chase .light--7 {
+    animation-delay: 0.9s;
+}
+
+.cabin__lights.chase .light--8 {
+    animation-delay: 1.05s;
+}
+
+.cabin__lights.chase .light--9 {
+    animation-delay: 1.2s;
+}
+
+.cabin__lights.chase .light--10 {
+    animation-delay: 1.35s;
+}
 
 /* Warm white mode */
 .cabin__lights.warm .light {
@@ -993,7 +1421,7 @@ body {
     filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
     opacity: 0;
     position: absolute;
-    top: -10px;
+    top: -110px;
     left: -30px;
     transform: scale(0);
     transition: all 0.5s ease;

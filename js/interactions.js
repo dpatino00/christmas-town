@@ -7,6 +7,19 @@
     'use strict';
 
     // ========================================
+    // Utility Functions
+    // ========================================
+    
+    function injectStyles(styleId, cssText) {
+        if (!document.querySelector(`#${styleId}`)) {
+            const style = document.createElement('style');
+            style.id = styleId;
+            style.textContent = cssText;
+            document.head.appendChild(style);
+        }
+    }
+
+    // ========================================
     // State Management
     // ========================================
     const STATE_KEY = 'christmas-cabin-state';
@@ -82,6 +95,16 @@
     const snowflakes = ['❄', '❅', '❆', '•'];
     let snowflakeElements = [];
 
+    const snowIntensityConfig = {
+        light: { baseDuration: 15, initialCount: 20, maxSnowflakes: 25, interval: 500 },
+        medium: { baseDuration: 10, initialCount: 30, maxSnowflakes: 40, interval: 500 },
+        heavy: { baseDuration: 6, initialCount: 50, maxSnowflakes: 60, interval: 200 }
+    };
+
+    function getSnowConfig() {
+        return snowIntensityConfig[state.snowIntensity] || snowIntensityConfig.medium;
+    }
+
     function createSnowflake() {
         const snowflake = document.createElement('div');
         snowflake.className = 'snowflake';
@@ -90,9 +113,8 @@
         snowflake.style.fontSize = (Math.random() * 0.8 + 0.5) + 'em';
         snowflake.style.opacity = Math.random() * 0.5 + 0.3;
 
-        const baseDuration = state.snowIntensity === 'light' ? 15 :
-            state.snowIntensity === 'heavy' ? 6 : 10;
-        const duration = baseDuration + Math.random() * 5;
+        const config = getSnowConfig();
+        const duration = config.baseDuration + Math.random() * 5;
         snowflake.style.animationDuration = duration + 's';
         snowflake.style.animationDelay = Math.random() * duration + 's';
 
@@ -110,22 +132,20 @@
     }
 
     function initSnow() {
+        const config = getSnowConfig();
+        
         // Create initial batch
-        const count = state.snowIntensity === 'light' ? 20 :
-            state.snowIntensity === 'heavy' ? 50 : 30;
-
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < config.initialCount; i++) {
             setTimeout(() => createSnowflake(), Math.random() * 3000);
         }
 
         // Continuously add snowflakes
         setInterval(() => {
-            const maxSnowflakes = state.snowIntensity === 'light' ? 25 :
-                state.snowIntensity === 'heavy' ? 60 : 40;
-            if (snowflakeElements.length < maxSnowflakes) {
+            const config = getSnowConfig();
+            if (snowflakeElements.length < config.maxSnowflakes) {
                 createSnowflake();
             }
-        }, state.snowIntensity === 'heavy' ? 200 : 500);
+        }, config.interval);
     }
 
     function cycleSnowIntensity() {
@@ -148,12 +168,12 @@
     // ========================================
     // Window Interactions
     // ========================================
-    function toggleMainWindow() {
-        state.windowLit = !state.windowLit;
-        elements.windowMain.classList.toggle('lit', state.windowLit);
+    function toggleWindow(windowElement, stateKey, stateBeforeKey) {
+        state[stateKey] = !state[stateKey];
+        windowElement.classList.toggle('lit', state[stateKey]);
 
-        if (state.windowLit && !state.windowLitBefore) {
-            state.windowLitBefore = true;
+        if (state[stateKey] && !state[stateBeforeKey]) {
+            state[stateBeforeKey] = true;
             incrementDiscoveries();
         }
 
@@ -161,17 +181,12 @@
         saveState();
     }
 
+    function toggleMainWindow() {
+        toggleWindow(elements.windowMain, 'windowLit', 'windowLitBefore');
+    }
+
     function toggleSideWindow() {
-        state.sideWindowLit = !state.sideWindowLit;
-        elements.windowSide.classList.toggle('lit', state.sideWindowLit);
-
-        if (state.sideWindowLit && !state.sideWindowLitBefore) {
-            state.sideWindowLitBefore = true;
-            incrementDiscoveries();
-        }
-
-        updateSmoke();
-        saveState();
+        toggleWindow(elements.windowSide, 'sideWindowLit', 'sideWindowLitBefore');
     }
 
     function updateSmoke() {
@@ -359,19 +374,14 @@
         `;
 
         // Add keyframes for message animation
-        if (!document.querySelector('#gift-message-styles')) {
-            const style = document.createElement('style');
-            style.id = 'gift-message-styles';
-            style.textContent = `
-                @keyframes message-fade {
-                    0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
-                    20% { opacity: 1; transform: translateX(-50%) translateY(0); }
-                    80% { opacity: 1; transform: translateX(-50%) translateY(0); }
-                    100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
-                }
-            `;
-            document.head.appendChild(style);
-        }
+        injectStyles('gift-message-styles', `
+            @keyframes message-fade {
+                0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+                20% { opacity: 1; transform: translateX(-50%) translateY(0); }
+                80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+                100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+            }
+        `);
 
         document.body.appendChild(messageEl);
 
@@ -433,95 +443,90 @@
         document.querySelector('.layer--foreground').appendChild(cat);
 
         // Add CSS animation for cat running to house
-        if (!document.querySelector('#cat-animations')) {
-            const style = document.createElement('style');
-            style.id = 'cat-animations';
-            style.textContent = `
-                @keyframes cat-run-to-house {
-                    0% { right: -50px; }
-                    70% { right: 280px; }
-                    100% { right: 280px; opacity: 0; }
+        injectStyles('cat-animations', `
+            @keyframes cat-run-to-house {
+                0% { right: -50px; }
+                70% { right: 280px; }
+                100% { right: 280px; opacity: 0; }
+            }
+            @keyframes cat-shadow-walk {
+                0% { 
+                    left: 10%; 
+                    transform: translateY(0px) scaleX(1);
                 }
-                @keyframes cat-shadow-walk {
-                    0% { 
-                        left: 10%; 
-                        transform: translateY(0px) scaleX(1);
-                    }
-                    8% { 
-                        left: 15%; 
-                        transform: translateY(-1px) scaleX(1);
-                    }
-                    15% { 
-                        left: 25%; 
-                        transform: translateY(0px) scaleX(1);
-                    }
-                    20% {
-                        left: 30%;
-                        transform: translateY(-0.5px) scaleX(1);
-                    }
-                    30% {
-                        left: 40%;
-                        transform: translateY(0px) scaleX(1);
-                    }
-                    35% {
-                        left: 42%;
-                        transform: translateY(0px) scaleX(1);
-                    }
-                    45% { 
-                        left: 50%; 
-                        transform: translateY(-1px) scaleX(1);
-                    }
-                    50% {
-                        left: 52%;
-                        transform: translateY(0px) scaleX(1);
-                    }
-                    55% {
-                        left: 55%;
-                        transform: translateY(0px) scaleX(-1);
-                    }
-                    65% {
-                        left: 50%;
-                        transform: translateY(-0.5px) scaleX(-1);
-                    }
-                    75% { 
-                        left: 35%; 
-                        transform: translateY(0px) scaleX(-1);
-                    }
-                    85% {
-                        left: 20%;
-                        transform: translateY(-1px) scaleX(-1);
-                    }
-                    95% { 
-                        left: 12%; 
-                        transform: translateY(0px) scaleX(-1);
-                    }
-                    100% { 
-                        left: 10%; 
-                        transform: translateY(0px) scaleX(1);
-                    }
+                8% { 
+                    left: 15%; 
+                    transform: translateY(-1px) scaleX(1);
                 }
-                @keyframes tail-sway {
-                    0% { transform: rotate(-20deg); }
-                    50% { transform: rotate(-5deg); }
-                    100% { transform: rotate(-20deg); }
+                15% { 
+                    left: 25%; 
+                    transform: translateY(0px) scaleX(1);
                 }
-                @keyframes cat-shadow-sit {
-                    0%, 80% { 
-                        transform: scaleX(1) scaleY(1);
-                        border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-                    }
-                    90% { 
-                        transform: scaleX(0.9) scaleY(1.3);
-                        border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
-                    }
-                    100% { 
-                        transform: scaleX(1) scaleY(1);
-                        border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-                    }
+                20% {
+                    left: 30%;
+                    transform: translateY(-0.5px) scaleX(1);
                 }
-            `;
-            document.head.appendChild(style);
-        }
+                30% {
+                    left: 40%;
+                    transform: translateY(0px) scaleX(1);
+                }
+                35% {
+                    left: 42%;
+                    transform: translateY(0px) scaleX(1);
+                }
+                45% { 
+                    left: 50%; 
+                    transform: translateY(-1px) scaleX(1);
+                }
+                50% {
+                    left: 52%;
+                    transform: translateY(0px) scaleX(1);
+                }
+                55% {
+                    left: 55%;
+                    transform: translateY(0px) scaleX(-1);
+                }
+                65% {
+                    left: 50%;
+                    transform: translateY(-0.5px) scaleX(-1);
+                }
+                75% { 
+                    left: 35%; 
+                    transform: translateY(0px) scaleX(-1);
+                }
+                85% {
+                    left: 20%;
+                    transform: translateY(-1px) scaleX(-1);
+                }
+                95% { 
+                    left: 12%; 
+                    transform: translateY(0px) scaleX(-1);
+                }
+                100% { 
+                    left: 10%; 
+                    transform: translateY(0px) scaleX(1);
+                }
+            }
+            @keyframes tail-sway {
+                0% { transform: rotate(-20deg); }
+                50% { transform: rotate(-5deg); }
+                100% { transform: rotate(-20deg); }
+            }
+            @keyframes cat-shadow-sit {
+                0%, 80% { 
+                    transform: scaleX(1) scaleY(1);
+                    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+                }
+                90% { 
+                    transform: scaleX(0.9) scaleY(1.3);
+                    border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+                }
+                100% { 
+                    transform: scaleX(1) scaleY(1);
+                    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+                }
+            }
+        `);
 
         // After cat runs to house, show it went inside
         setTimeout(() => {
@@ -786,35 +791,31 @@
     // ========================================
     // Event Listeners
     // ========================================
+    function addInteractionListeners(element, callback) {
+        if (!element) return;
+        
+        element.addEventListener('click', callback);
+        element.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                callback();
+            }
+        });
+    }
+
     function initEventListeners() {
         // Windows
-        elements.windowMain?.addEventListener('click', toggleMainWindow);
-        elements.windowMain?.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') toggleMainWindow();
-        });
-
-        elements.windowSide?.addEventListener('click', toggleSideWindow);
-        elements.windowSide?.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') toggleSideWindow();
-        });
+        addInteractionListeners(elements.windowMain, toggleMainWindow);
+        addInteractionListeners(elements.windowSide, toggleSideWindow);
 
         // Door
-        elements.door?.addEventListener('click', knockDoor);
-        elements.door?.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') knockDoor();
-        });
+        addInteractionListeners(elements.door, knockDoor);
 
         // String lights
-        elements.stringLights?.addEventListener('click', cycleLights);
-        elements.stringLights?.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') cycleLights();
-        });
+        addInteractionListeners(elements.stringLights, cycleLights);
 
         // Tree
-        elements.tree?.addEventListener('click', decorateTree);
-        elements.tree?.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') decorateTree();
-        });
+        addInteractionListeners(elements.tree, decorateTree);
 
         // Gifts (now 5 gifts)
         for (let i = 1; i <= 5; i++) {

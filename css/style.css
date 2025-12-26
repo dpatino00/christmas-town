@@ -625,45 +625,21 @@ body {
 }
 
 /* Position lights along wire */
-.light--1 {
-    left: 5%;
+.light {
+    --light-offset: 0%;
+    left: var(--light-offset);
 }
 
-.light--2 {
-    left: 15%;
-}
-
-.light--3 {
-    left: 25%;
-}
-
-.light--4 {
-    left: 35%;
-}
-
-.light--5 {
-    left: 45%;
-}
-
-.light--6 {
-    left: 55%;
-}
-
-.light--7 {
-    left: 65%;
-}
-
-.light--8 {
-    left: 75%;
-}
-
-.light--9 {
-    left: 85%;
-}
-
-.light--10 {
-    left: 95%;
-}
+.light--1 { --light-offset: 5%; }
+.light--2 { --light-offset: 15%; }
+.light--3 { --light-offset: 25%; }
+.light--4 { --light-offset: 35%; }
+.light--5 { --light-offset: 45%; }
+.light--6 { --light-offset: 55%; }
+.light--7 { --light-offset: 65%; }
+.light--8 { --light-offset: 75%; }
+.light--9 { --light-offset: 85%; }
+.light--10 { --light-offset: 95%; }
 
 /* Lights ON state */
 .cabin__lights.on .light {
@@ -671,85 +647,52 @@ body {
     animation: glow-pulse var(--glow-pulse) ease-in-out infinite;
 }
 
+/* Light colors and glow effects */
 .cabin__lights.on .light--1,
 .cabin__lights.on .light--6 {
     background: var(--light-red);
     box-shadow: 0 0 10px var(--light-red), 0 0 20px var(--light-red);
-    animation-delay: 0s;
 }
 
 .cabin__lights.on .light--2,
 .cabin__lights.on .light--7 {
     background: var(--light-green);
     box-shadow: 0 0 10px var(--light-green), 0 0 20px var(--light-green);
-    animation-delay: 0.2s;
 }
 
 .cabin__lights.on .light--3,
 .cabin__lights.on .light--8 {
     background: var(--light-blue);
     box-shadow: 0 0 10px var(--light-blue), 0 0 20px var(--light-blue);
-    animation-delay: 0.4s;
 }
 
 .cabin__lights.on .light--4,
 .cabin__lights.on .light--9 {
     background: var(--light-yellow);
     box-shadow: 0 0 10px var(--light-yellow), 0 0 20px var(--light-yellow);
-    animation-delay: 0.6s;
 }
 
 .cabin__lights.on .light--5,
 .cabin__lights.on .light--10 {
     background: var(--light-purple);
     box-shadow: 0 0 10px var(--light-purple), 0 0 20px var(--light-purple);
-    animation-delay: 0.8s;
 }
 
-/* Chase mode */
+/* Chase mode - use animation delay based on index */
 .cabin__lights.chase .light {
     animation: chase-light 2s ease-in-out infinite;
 }
 
-.cabin__lights.chase .light--1 {
-    animation-delay: 0s;
-}
-
-.cabin__lights.chase .light--2 {
-    animation-delay: 0.15s;
-}
-
-.cabin__lights.chase .light--3 {
-    animation-delay: 0.3s;
-}
-
-.cabin__lights.chase .light--4 {
-    animation-delay: 0.45s;
-}
-
-.cabin__lights.chase .light--5 {
-    animation-delay: 0.6s;
-}
-
-.cabin__lights.chase .light--6 {
-    animation-delay: 0.75s;
-}
-
-.cabin__lights.chase .light--7 {
-    animation-delay: 0.9s;
-}
-
-.cabin__lights.chase .light--8 {
-    animation-delay: 1.05s;
-}
-
-.cabin__lights.chase .light--9 {
-    animation-delay: 1.2s;
-}
-
-.cabin__lights.chase .light--10 {
-    animation-delay: 1.35s;
-}
+.cabin__lights.chase .light--1 { animation-delay: 0s; }
+.cabin__lights.chase .light--2 { animation-delay: 0.15s; }
+.cabin__lights.chase .light--3 { animation-delay: 0.3s; }
+.cabin__lights.chase .light--4 { animation-delay: 0.45s; }
+.cabin__lights.chase .light--5 { animation-delay: 0.6s; }
+.cabin__lights.chase .light--6 { animation-delay: 0.75s; }
+.cabin__lights.chase .light--7 { animation-delay: 0.9s; }
+.cabin__lights.chase .light--8 { animation-delay: 1.05s; }
+.cabin__lights.chase .light--9 { animation-delay: 1.2s; }
+.cabin__lights.chase .light--10 { animation-delay: 1.35s; }
 
 /* Warm white mode */
 .cabin__lights.warm .light {
@@ -971,34 +914,10 @@ body {
     transform: scale(1);
 }
 
+/* Ornament positioning */
 .ornament--1 {
     top: 25px;
     left: 38%;
-}
-
-.ornament--2 {
-    top: 45px;
-    left: 58%;
-}
-
-.ornament--3 {
-    top: 65px;
-    left: 28%;
-}
-
-.ornament--4 {
-    top: 85px;
-    left: 65%;
-}
-
-.ornament--5 {
-    top: 105px;
-    left: 38%;
-}
-
-.ornament--6 {
-    top: 75px;
-    left: 48%;
 }
 
 .ornament--2 {
@@ -1159,17 +1078,25 @@ body {
     }
 }
 
-/* Different gift opening reveals */
+/* Different gift opening reveals - all share similar animation patterns */
+.gift-opened-heart,
+.gift-opened-star,
+.gift-opened-sparkle {
+    animation-duration: 0.6s;
+    animation-timing-function: ease;
+    animation-fill-mode: forwards;
+}
+
 .gift-opened-heart {
-    animation: heart-reveal 0.6s ease forwards;
+    animation-name: heart-reveal;
 }
 
 .gift-opened-star {
-    animation: star-reveal 0.6s ease forwards;
+    animation-name: star-reveal;
 }
 
 .gift-opened-sparkle {
-    animation: sparkle-reveal 0.6s ease forwards;
+    animation-name: sparkle-reveal;
 }
 
 @keyframes heart-reveal {

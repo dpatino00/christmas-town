@@ -7,6 +7,29 @@
     'use strict';
 
     // ========================================
+    // Utility Functions
+    // ========================================
+    
+    // Configuration constants
+    const SNOWMAN_IMAGE_PATH = './assets/asnow.png';
+    
+    function injectStyles(styleId, cssText) {
+        if (!document.querySelector(`#${styleId}`)) {
+            const style = document.createElement('style');
+            style.id = styleId;
+            style.textContent = cssText;
+            document.head.appendChild(style);
+        }
+    }
+
+    function createStyledElement(tag, className, cssText) {
+        const element = document.createElement(tag);
+        if (className) element.className = className;
+        if (cssText) element.style.cssText = cssText;
+        return element;
+    }
+
+    // ========================================
     // State Management
     // ========================================
     const STATE_KEY = 'christmas-cabin-state';
@@ -82,6 +105,16 @@
     const snowflakes = ['❄', '❅', '❆', '•'];
     let snowflakeElements = [];
 
+    const snowIntensityConfig = {
+        light: { baseDuration: 15, initialCount: 20, maxSnowflakes: 25, interval: 500 },
+        medium: { baseDuration: 10, initialCount: 30, maxSnowflakes: 40, interval: 500 },
+        heavy: { baseDuration: 6, initialCount: 50, maxSnowflakes: 60, interval: 200 }
+    };
+
+    function getSnowConfig() {
+        return snowIntensityConfig[state.snowIntensity] || snowIntensityConfig.medium;
+    }
+
     function createSnowflake() {
         const snowflake = document.createElement('div');
         snowflake.className = 'snowflake';
@@ -90,9 +123,8 @@
         snowflake.style.fontSize = (Math.random() * 0.8 + 0.5) + 'em';
         snowflake.style.opacity = Math.random() * 0.5 + 0.3;
 
-        const baseDuration = state.snowIntensity === 'light' ? 15 :
-            state.snowIntensity === 'heavy' ? 6 : 10;
-        const duration = baseDuration + Math.random() * 5;
+        const config = getSnowConfig();
+        const duration = config.baseDuration + Math.random() * 5;
         snowflake.style.animationDuration = duration + 's';
         snowflake.style.animationDelay = Math.random() * duration + 's';
 
@@ -110,22 +142,20 @@
     }
 
     function initSnow() {
+        const config = getSnowConfig();
+        
         // Create initial batch
-        const count = state.snowIntensity === 'light' ? 20 :
-            state.snowIntensity === 'heavy' ? 50 : 30;
-
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < config.initialCount; i++) {
             setTimeout(() => createSnowflake(), Math.random() * 3000);
         }
 
         // Continuously add snowflakes
         setInterval(() => {
-            const maxSnowflakes = state.snowIntensity === 'light' ? 25 :
-                state.snowIntensity === 'heavy' ? 60 : 40;
-            if (snowflakeElements.length < maxSnowflakes) {
+            const config = getSnowConfig();
+            if (snowflakeElements.length < config.maxSnowflakes) {
                 createSnowflake();
             }
-        }, state.snowIntensity === 'heavy' ? 200 : 500);
+        }, config.interval);
     }
 
     function cycleSnowIntensity() {
@@ -148,12 +178,12 @@
     // ========================================
     // Window Interactions
     // ========================================
-    function toggleMainWindow() {
-        state.windowLit = !state.windowLit;
-        elements.windowMain.classList.toggle('lit', state.windowLit);
+    function toggleWindow(windowElement, stateKey, stateBeforeKey) {
+        state[stateKey] = !state[stateKey];
+        windowElement.classList.toggle('lit', state[stateKey]);
 
-        if (state.windowLit && !state.windowLitBefore) {
-            state.windowLitBefore = true;
+        if (state[stateKey] && !state[stateBeforeKey]) {
+            state[stateBeforeKey] = true;
             incrementDiscoveries();
         }
 
@@ -161,17 +191,12 @@
         saveState();
     }
 
+    function toggleMainWindow() {
+        toggleWindow(elements.windowMain, 'windowLit', 'windowLitBefore');
+    }
+
     function toggleSideWindow() {
-        state.sideWindowLit = !state.sideWindowLit;
-        elements.windowSide.classList.toggle('lit', state.sideWindowLit);
-
-        if (state.sideWindowLit && !state.sideWindowLitBefore) {
-            state.sideWindowLitBefore = true;
-            incrementDiscoveries();
-        }
-
-        updateSmoke();
-        saveState();
+        toggleWindow(elements.windowSide, 'sideWindowLit', 'sideWindowLitBefore');
     }
 
     function updateSmoke() {
@@ -339,10 +364,7 @@
 
     function showGiftMessage(message) {
         // Create temporary message element
-        const messageEl = document.createElement('div');
-        messageEl.className = 'gift-message';
-        messageEl.textContent = message;
-        messageEl.style.cssText = `
+        const messageEl = createStyledElement('div', 'gift-message', `
             position: fixed;
             top: 30%;
             left: 50%;
@@ -356,22 +378,18 @@
             z-index: 150;
             animation: message-fade 2s ease forwards;
             pointer-events: none;
-        `;
+        `);
+        messageEl.textContent = message;
 
         // Add keyframes for message animation
-        if (!document.querySelector('#gift-message-styles')) {
-            const style = document.createElement('style');
-            style.id = 'gift-message-styles';
-            style.textContent = `
-                @keyframes message-fade {
-                    0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
-                    20% { opacity: 1; transform: translateX(-50%) translateY(0); }
-                    80% { opacity: 1; transform: translateX(-50%) translateY(0); }
-                    100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
-                }
-            `;
-            document.head.appendChild(style);
-        }
+        injectStyles('gift-message-styles', `
+            @keyframes message-fade {
+                0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+                20% { opacity: 1; transform: translateX(-50%) translateY(0); }
+                80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+                100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+            }
+        `);
 
         document.body.appendChild(messageEl);
 
@@ -417,111 +435,104 @@
         showGiftMessage("Meet your new furry friend! 🐱");
 
         // Create cat element
-        const cat = document.createElement('div');
-        cat.id = 'adopted-cat';
-        cat.className = 'cat-sprite';
-        cat.innerHTML = '🐱';
-        cat.style.cssText = `
+        const cat = createStyledElement('div', 'cat-sprite', `
             position: absolute;
             bottom: 20px;
             right: -50px;
             font-size: 24px;
             z-index: 90;
             animation: cat-run-to-house 3s ease-in-out forwards;
-        `;
+        `);
+        cat.id = 'adopted-cat';
+        cat.innerHTML = '🐱';
 
         document.querySelector('.layer--foreground').appendChild(cat);
 
         // Add CSS animation for cat running to house
-        if (!document.querySelector('#cat-animations')) {
-            const style = document.createElement('style');
-            style.id = 'cat-animations';
-            style.textContent = `
-                @keyframes cat-run-to-house {
-                    0% { right: -50px; }
-                    70% { right: 280px; }
-                    100% { right: 280px; opacity: 0; }
+        injectStyles('cat-animations', `
+            @keyframes cat-run-to-house {
+                0% { right: -50px; }
+                70% { right: 280px; }
+                100% { right: 280px; opacity: 0; }
+            }
+            @keyframes cat-shadow-walk {
+                0% { 
+                    left: 10%; 
+                    transform: translateY(0px) scaleX(1);
                 }
-                @keyframes cat-shadow-walk {
-                    0% { 
-                        left: 10%; 
-                        transform: translateY(0px) scaleX(1);
-                    }
-                    8% { 
-                        left: 15%; 
-                        transform: translateY(-1px) scaleX(1);
-                    }
-                    15% { 
-                        left: 25%; 
-                        transform: translateY(0px) scaleX(1);
-                    }
-                    20% {
-                        left: 30%;
-                        transform: translateY(-0.5px) scaleX(1);
-                    }
-                    30% {
-                        left: 40%;
-                        transform: translateY(0px) scaleX(1);
-                    }
-                    35% {
-                        left: 42%;
-                        transform: translateY(0px) scaleX(1);
-                    }
-                    45% { 
-                        left: 50%; 
-                        transform: translateY(-1px) scaleX(1);
-                    }
-                    50% {
-                        left: 52%;
-                        transform: translateY(0px) scaleX(1);
-                    }
-                    55% {
-                        left: 55%;
-                        transform: translateY(0px) scaleX(-1);
-                    }
-                    65% {
-                        left: 50%;
-                        transform: translateY(-0.5px) scaleX(-1);
-                    }
-                    75% { 
-                        left: 35%; 
-                        transform: translateY(0px) scaleX(-1);
-                    }
-                    85% {
-                        left: 20%;
-                        transform: translateY(-1px) scaleX(-1);
-                    }
-                    95% { 
-                        left: 12%; 
-                        transform: translateY(0px) scaleX(-1);
-                    }
-                    100% { 
-                        left: 10%; 
-                        transform: translateY(0px) scaleX(1);
-                    }
+                8% { 
+                    left: 15%; 
+                    transform: translateY(-1px) scaleX(1);
                 }
-                @keyframes tail-sway {
-                    0% { transform: rotate(-20deg); }
-                    50% { transform: rotate(-5deg); }
-                    100% { transform: rotate(-20deg); }
+                15% { 
+                    left: 25%; 
+                    transform: translateY(0px) scaleX(1);
                 }
-                @keyframes cat-shadow-sit {
-                    0%, 80% { 
-                        transform: scaleX(1) scaleY(1);
-                        border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-                    }
-                    90% { 
-                        transform: scaleX(0.9) scaleY(1.3);
-                        border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
-                    }
-                    100% { 
-                        transform: scaleX(1) scaleY(1);
-                        border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-                    }
+                20% {
+                    left: 30%;
+                    transform: translateY(-0.5px) scaleX(1);
                 }
-            `;
-            document.head.appendChild(style);
-        }
+                30% {
+                    left: 40%;
+                    transform: translateY(0px) scaleX(1);
+                }
+                35% {
+                    left: 42%;
+                    transform: translateY(0px) scaleX(1);
+                }
+                45% { 
+                    left: 50%; 
+                    transform: translateY(-1px) scaleX(1);
+                }
+                50% {
+                    left: 52%;
+                    transform: translateY(0px) scaleX(1);
+                }
+                55% {
+                    left: 55%;
+                    transform: translateY(0px) scaleX(-1);
+                }
+                65% {
+                    left: 50%;
+                    transform: translateY(-0.5px) scaleX(-1);
+                }
+                75% { 
+                    left: 35%; 
+                    transform: translateY(0px) scaleX(-1);
+                }
+                85% {
+                    left: 20%;
+                    transform: translateY(-1px) scaleX(-1);
+                }
+                95% { 
+                    left: 12%; 
+                    transform: translateY(0px) scaleX(-1);
+                }
+                100% { 
+                    left: 10%; 
+                    transform: translateY(0px) scaleX(1);
+                }
+            }
+            @keyframes tail-sway {
+                0% { transform: rotate(-20deg); }
+                50% { transform: rotate(-5deg); }
+                100% { transform: rotate(-20deg); }
+            }
+            @keyframes cat-shadow-sit {
+                0%, 80% { 
+                    transform: scaleX(1) scaleY(1);
+                    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+                }
+                90% { 
+                    transform: scaleX(0.9) scaleY(1.3);
+                    border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+                }
+                100% { 
+                    transform: scaleX(1) scaleY(1);
+                    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+                }
+            }
+        `);
 
         // After cat runs to house, show it went inside
         setTimeout(() => {
@@ -542,9 +553,7 @@
 
         if (mainWindow) {
             // Main cat body
-            const catShadow = document.createElement('div');
-            catShadow.className = 'cat-shadow';
-            catShadow.style.cssText = `
+            const catShadow = createStyledElement('div', 'cat-shadow', `
                 position: absolute;
                 bottom: 15px;
                 left: 20%;
@@ -554,11 +563,10 @@
                 border-radius: 50% 80% 80% 50% / 70% 70% 30% 30%;
                 animation: cat-shadow-walk 12s ease-in-out infinite;
                 opacity: 0.7;
-            `;
+            `);
 
             // Cat head (overlapping with body)
-            const catHead = document.createElement('div');
-            catHead.style.cssText = `
+            const catHead = createStyledElement('div', '', `
                 position: absolute;
                 top: -1px;
                 right: -5px;
@@ -566,11 +574,10 @@
                 height: 14px;
                 background: rgba(0, 0, 0, 0.5);
                 border-radius: 60% 40% 40% 60%;
-            `;
+            `);
 
             // Cat ears
-            const leftEar = document.createElement('div');
-            leftEar.style.cssText = `
+            const leftEar = createStyledElement('div', '', `
                 position: absolute;
                 top: -2px;
                 left: 2px;
@@ -579,10 +586,9 @@
                 background: rgba(0, 0, 0, 0.5);
                 border-radius: 50% 0 50% 0;
                 transform: rotate(-20deg);
-            `;
+            `);
 
-            const rightEar = document.createElement('div');
-            rightEar.style.cssText = `
+            const rightEar = createStyledElement('div', '', `
                 position: absolute;
                 top: -2px;
                 right: 2px;
@@ -591,11 +597,10 @@
                 background: rgba(0, 0, 0, 0.5);
                 border-radius: 0 50% 0 50%;
                 transform: rotate(20deg);
-            `;
+            `);
 
             // Cat tail (properly attached to body)
-            const catTail = document.createElement('div');
-            catTail.style.cssText = `
+            const catTail = createStyledElement('div', '', `
                 position: absolute;
                 top: 2px;
                 left: -8px;
@@ -606,11 +611,10 @@
                 transform: rotate(-20deg);
                 transform-origin: right center;
                 animation: tail-sway 3s ease-in-out infinite;
-            `;
+            `);
 
             // Tail tip for more realism
-            const tailTip = document.createElement('div');
-            tailTip.style.cssText = `
+            const tailTip = createStyledElement('div', '', `
                 position: absolute;
                 top: -1px;
                 left: -6px;
@@ -619,7 +623,7 @@
                 background: rgba(0, 0, 0, 0.3);
                 border-radius: 0 60% 60% 0;
                 transform: rotate(-10deg);
-            `;
+            `);
 
             catHead.appendChild(leftEar);
             catHead.appendChild(rightEar);
@@ -651,13 +655,18 @@
     // ========================================
     // Snowman Interaction
     // ========================================
+    function createSnowmanImage() {
+        const snowmanImg = document.createElement('img');
+        snowmanImg.src = SNOWMAN_IMAGE_PATH;
+        snowmanImg.alt = 'Snowman';
+        snowmanImg.className = 'snowman-image';
+        return snowmanImg;
+    }
+
     function waveToSnowman() {
         if (!state.snowmanTransformed) {
             // First click - transform to image
-            const snowmanImg = document.createElement('img');
-            snowmanImg.src = './assets/asnow.png';
-            snowmanImg.alt = 'Snowman';
-            snowmanImg.className = 'snowman-image';
+            const snowmanImg = createSnowmanImage();
             elements.snowman.appendChild(snowmanImg);
 
             setTimeout(() => {
@@ -767,10 +776,7 @@
 
         // Snowman
         if (state.snowmanTransformed) {
-            const snowmanImg = document.createElement('img');
-            snowmanImg.src = './assets/asnow.png';
-            snowmanImg.alt = 'Snowman';
-            snowmanImg.className = 'snowman-image';
+            const snowmanImg = createSnowmanImage();
             elements.snowman.appendChild(snowmanImg);
             elements.snowman.classList.add('transformed');
         }
@@ -786,35 +792,31 @@
     // ========================================
     // Event Listeners
     // ========================================
+    function addClickAndKeyListeners(element, callback) {
+        if (!element) return;
+        
+        element.addEventListener('click', callback);
+        element.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                callback();
+            }
+        });
+    }
+
     function initEventListeners() {
         // Windows
-        elements.windowMain?.addEventListener('click', toggleMainWindow);
-        elements.windowMain?.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') toggleMainWindow();
-        });
-
-        elements.windowSide?.addEventListener('click', toggleSideWindow);
-        elements.windowSide?.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') toggleSideWindow();
-        });
+        addClickAndKeyListeners(elements.windowMain, toggleMainWindow);
+        addClickAndKeyListeners(elements.windowSide, toggleSideWindow);
 
         // Door
-        elements.door?.addEventListener('click', knockDoor);
-        elements.door?.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') knockDoor();
-        });
+        addClickAndKeyListeners(elements.door, knockDoor);
 
         // String lights
-        elements.stringLights?.addEventListener('click', cycleLights);
-        elements.stringLights?.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') cycleLights();
-        });
+        addClickAndKeyListeners(elements.stringLights, cycleLights);
 
         // Tree
-        elements.tree?.addEventListener('click', decorateTree);
-        elements.tree?.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') decorateTree();
-        });
+        addClickAndKeyListeners(elements.tree, decorateTree);
 
         // Gifts (now 5 gifts)
         for (let i = 1; i <= 5; i++) {

@@ -10,6 +10,9 @@
     // Utility Functions
     // ========================================
     
+    // Configuration constants
+    const SNOWMAN_IMAGE_PATH = './assets/asnow.png';
+    
     function injectStyles(styleId, cssText) {
         if (!document.querySelector(`#${styleId}`)) {
             const style = document.createElement('style');
@@ -654,7 +657,7 @@
     // ========================================
     function createSnowmanImage() {
         const snowmanImg = document.createElement('img');
-        snowmanImg.src = './assets/asnow.png';
+        snowmanImg.src = SNOWMAN_IMAGE_PATH;
         snowmanImg.alt = 'Snowman';
         snowmanImg.className = 'snowman-image';
         return snowmanImg;
@@ -789,7 +792,7 @@
     // ========================================
     // Event Listeners
     // ========================================
-    function addInteractionListeners(element, callback) {
+    function addClickAndKeyListeners(element, callback) {
         if (!element) return;
         
         element.addEventListener('click', callback);
@@ -803,17 +806,17 @@
 
     function initEventListeners() {
         // Windows
-        addInteractionListeners(elements.windowMain, toggleMainWindow);
-        addInteractionListeners(elements.windowSide, toggleSideWindow);
+        addClickAndKeyListeners(elements.windowMain, toggleMainWindow);
+        addClickAndKeyListeners(elements.windowSide, toggleSideWindow);
 
         // Door
-        addInteractionListeners(elements.door, knockDoor);
+        addClickAndKeyListeners(elements.door, knockDoor);
 
         // String lights
-        addInteractionListeners(elements.stringLights, cycleLights);
+        addClickAndKeyListeners(elements.stringLights, cycleLights);
 
         // Tree
-        addInteractionListeners(elements.tree, decorateTree);
+        addClickAndKeyListeners(elements.tree, decorateTree);
 
         // Gifts (now 5 gifts)
         for (let i = 1; i <= 5; i++) {

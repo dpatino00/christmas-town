@@ -142,3 +142,26 @@ All interactive elements should:
 - Debounce or throttle frequent events if added
 - Keep asset sizes small (optimize images)
 - No external dependencies except htmx (keep bundle size minimal)
+
+## Refactoring Patterns (Applied in 2025 Cleanup)
+
+### DRY Principles
+- Extract common DOM creation logic into reusable functions
+- Use parameterized functions for variations (e.g., `createCatEar(side)`)
+- Consolidate duplicate animation keyframes using CSS variables
+
+### CSS Variables for Variation
+- Use CSS custom properties within animations for customization
+- Example: `--float-distance`, `--reveal-scale`, `--light-index`
+- Enables single animation definition with multiple visual variants
+
+### Calculation-based Patterns
+- Use CSS `calc()` for mathematical positioning/timing patterns
+- Example: `left: calc(5% + var(--light-index) * 10%)`
+- Example: `animation-delay: calc(var(--light-index) * 0.15s)`
+- Reduces repetitive declarations and improves scalability
+
+### Code Organization
+- Keep related logic together (e.g., aurora creation in one function)
+- Use helper functions for repeated element creation patterns
+- Document refactoring decisions in DESIGN_DOC.md

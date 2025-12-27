@@ -1897,6 +1897,22 @@ body {
         border-bottom-width: 70px;
     }
 
+    .cabin__chimney {
+        left: 30px;
+        width: 20px;
+    }
+
+    .cabin__door {
+        width: 40px;
+        height: 60px;
+        left: 15px;
+    }
+
+    .cabin__window--side {
+        width: 35px;
+        height: 40px;
+    }
+
     .tree {
         right: 8%;
         width: 60px;
@@ -1910,12 +1926,47 @@ body {
     .object--snowman {
         font-size: 32px;
     }
+
+    /* Controls adjustment for tablets */
+    .controls {
+        bottom: 15px;
+        right: 15px;
+    }
+
+    .control-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    /* Secret reveal on tablets */
+    #secret-reveal {
+        max-width: 85%;
+        padding: 25px 30px;
+    }
+
+    /* Mountains smaller on tablets */
+    .mountains {
+        height: 140px;
+        bottom: 20%;
+    }
+
+    .moon {
+        width: 50px;
+        height: 50px;
+    }
+
+    /* Boston skyline adjustments */
+    .boston-skyline {
+        transform: scale(0.8);
+    }
 }
 
 @media (max-width: 480px) {
     .cabin {
         width: 200px;
         height: 150px;
+        bottom: 26%;
     }
 
     .cabin__body {
@@ -1934,16 +1985,198 @@ body {
         border-bottom-width: 60px;
     }
 
+    .cabin__chimney {
+        left: 20px;
+        width: 16px;
+        height: 30px;
+    }
+
+    .cabin__chimney::before {
+        border-width: 3px;
+    }
+
     .cabin__window--main {
         width: 60px;
         height: 50px;
+        left: 20px;
+    }
+
+    .cabin__window--side {
+        width: 30px;
+        height: 35px;
+        top: 20px;
+    }
+
+    .cabin__door {
+        width: 35px;
+        height: 55px;
+        left: 10px;
+        bottom: 0;
+    }
+
+    .cabin__wreath {
+        width: 15px;
+        height: 15px;
+        top: 8px;
     }
 
     .cabin__lights {
         width: 180px;
+        top: -8px;
+    }
+
+    .light {
+        width: 6px;
+        height: 8px;
+    }
+
+    /* Controls on mobile */
+    .controls {
+        bottom: 10px;
+        right: 10px;
+        gap: 8px;
+    }
+
+    .control-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+
+    /* Interaction counter on mobile */
+    .interaction-counter {
+        bottom: 10px;
+        left: 10px;
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    /* Secret reveal on mobile */
+    #secret-reveal {
+        max-width: 90%;
+        padding: 20px 25px;
+        border-radius: 12px;
+    }
+
+    #secret-reveal h2 {
+        font-size: 1.3em;
+        margin-bottom: 12px;
+    }
+
+    #secret-reveal p {
+        font-size: 0.95em;
+        margin-bottom: 15px;
+    }
+
+    #secret-reveal button {
+        padding: 8px 20px;
+        font-size: 14px;
     }
 
     .warmth-meter {
         display: none;
+    }
+
+    /* Mountains on mobile */
+    .mountains {
+        height: 120px;
+        bottom: 18%;
+    }
+
+    .moon {
+        width: 40px;
+        height: 40px;
+        top: 10%;
+        right: 10%;
+    }
+
+    /* Tree on mobile */
+    .tree {
+        right: 5%;
+        width: 50px;
+        height: 80px;
+        bottom: 22%;
+    }
+
+    /* Boston skyline smaller on mobile */
+    .boston-skyline {
+        transform: scale(0.6);
+        bottom: 20%;
+    }
+
+    /* Snowflakes smaller on mobile */
+    .snowflake {
+        font-size: 12px;
+    }
+
+    /* Objects smaller on mobile */
+    .object {
+        font-size: 20px;
+    }
+
+    .object--snowman {
+        font-size: 28px;
+    }
+}
+
+/* Extra small phones */
+@media (max-width: 360px) {
+    .cabin {
+        width: 170px;
+        height: 130px;
+        bottom: 28%;
+    }
+
+    .cabin__body {
+        width: 150px;
+        height: 75px;
+        left: 10px;
+    }
+
+    .cabin__roof {
+        width: 170px;
+    }
+
+    .cabin__roof::before {
+        border-left-width: 85px;
+        border-right-width: 85px;
+        border-bottom-width: 50px;
+    }
+
+    .cabin__window--main {
+        width: 50px;
+        height: 42px;
+        left: 18px;
+    }
+
+    .cabin__door {
+        width: 30px;
+        height: 48px;
+    }
+
+    .cabin__lights {
+        width: 150px;
+    }
+
+    .light {
+        width: 5px;
+        height: 7px;
+    }
+
+    #secret-reveal {
+        padding: 15px 20px;
+    }
+
+    #secret-reveal h2 {
+        font-size: 1.1em;
+    }
+
+    #secret-reveal p {
+        font-size: 0.85em;
+    }
+
+    .tree {
+        width: 40px;
+        height: 65px;
     }
 }

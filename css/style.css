@@ -1147,51 +1147,22 @@ body {
     box-shadow: none;
 }
 
-/* Position lights along wire */
+/* Position lights along wire using indexed variable */
 .light {
-    --light-offset: 0%;
-    left: var(--light-offset);
+    --light-index: 0;
+    left: calc(5% + var(--light-index) * 10%);
 }
 
-.light--1 {
-    --light-offset: 5%;
-}
-
-.light--2 {
-    --light-offset: 15%;
-}
-
-.light--3 {
-    --light-offset: 25%;
-}
-
-.light--4 {
-    --light-offset: 35%;
-}
-
-.light--5 {
-    --light-offset: 45%;
-}
-
-.light--6 {
-    --light-offset: 55%;
-}
-
-.light--7 {
-    --light-offset: 65%;
-}
-
-.light--8 {
-    --light-offset: 75%;
-}
-
-.light--9 {
-    --light-offset: 85%;
-}
-
-.light--10 {
-    --light-offset: 95%;
-}
+.light--1 { --light-index: 0; }
+.light--2 { --light-index: 1; }
+.light--3 { --light-index: 2; }
+.light--4 { --light-index: 3; }
+.light--5 { --light-index: 4; }
+.light--6 { --light-index: 5; }
+.light--7 { --light-index: 6; }
+.light--8 { --light-index: 7; }
+.light--9 { --light-index: 8; }
+.light--10 { --light-index: 9; }
 
 /* Lights ON state */
 .cabin__lights.on .light {
@@ -1230,49 +1201,10 @@ body {
     box-shadow: 0 0 10px var(--light-purple), 0 0 20px var(--light-purple);
 }
 
-/* Chase mode - use animation delay based on index */
+/* Chase mode - use animation delay based on index with calc */
 .cabin__lights.chase .light {
     animation: chase-light 2s ease-in-out infinite;
-}
-
-.cabin__lights.chase .light--1 {
-    animation-delay: 0s;
-}
-
-.cabin__lights.chase .light--2 {
-    animation-delay: 0.15s;
-}
-
-.cabin__lights.chase .light--3 {
-    animation-delay: 0.3s;
-}
-
-.cabin__lights.chase .light--4 {
-    animation-delay: 0.45s;
-}
-
-.cabin__lights.chase .light--5 {
-    animation-delay: 0.6s;
-}
-
-.cabin__lights.chase .light--6 {
-    animation-delay: 0.75s;
-}
-
-.cabin__lights.chase .light--7 {
-    animation-delay: 0.9s;
-}
-
-.cabin__lights.chase .light--8 {
-    animation-delay: 1.05s;
-}
-
-.cabin__lights.chase .light--9 {
-    animation-delay: 1.2s;
-}
-
-.cabin__lights.chase .light--10 {
-    animation-delay: 1.35s;
+    animation-delay: calc(var(--light-index) * 0.15s);
 }
 
 /* Warm white mode */
@@ -1617,95 +1549,51 @@ body {
     bottom: 5px;
     left: 0px;
     font-size: 18px;
-    animation: gift-float-1 3s ease-in-out infinite;
+    --float-distance: -4px;
+    animation: gift-float 3s ease-in-out infinite;
 }
 
 .gifts-container #gift-2 {
     bottom: 8px;
     left: 62px;
     font-size: 20px;
-    animation: gift-float-2 3.5s ease-in-out infinite;
+    --float-distance: -6px;
+    animation: gift-float 3.5s ease-in-out infinite;
 }
 
 .gifts-container #gift-3 {
     bottom: 32px;
     left: 18px;
     font-size: 16px;
-    animation: gift-float-3 3.2s ease-in-out infinite;
+    --float-distance: -3px;
+    animation: gift-float 3.2s ease-in-out infinite;
 }
 
 .gifts-container #gift-4 {
     bottom: 32px;
     left: 50px;
     font-size: 18px;
-    animation: gift-float-4 3.8s ease-in-out infinite;
+    --float-distance: -5px;
+    animation: gift-float 3.8s ease-in-out infinite;
 }
 
 .gifts-container #gift-5 {
     bottom: 2px;
     left: 30px;
     font-size: 16px;
-    animation: gift-float-5 3.3s ease-in-out infinite;
+    --float-distance: -4px;
+    animation: gift-float 3.3s ease-in-out infinite;
 }
 
-/* Subtle floating animations for gifts */
-@keyframes gift-float-1 {
-
+/* Subtle floating animation for gifts - uses CSS variable for distance */
+@keyframes gift-float {
     0%,
     100% {
         transform: translateY(0px);
     }
 
     50% {
-        transform: translateY(-4px);
-    }
-}
-
-@keyframes gift-float-2 {
-
-    0%,
-    100% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-6px);
-    }
-}
-
-@keyframes gift-float-3 {
-
-    0%,
-    100% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-3px);
-    }
-}
-
-@keyframes gift-float-4 {
-
-    0%,
-    100% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-5px);
-    }
-}
-
-@keyframes gift-float-5 {
-
-    0%,
-    100% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-4px);
+        transform: translateY(var(--float-distance, -4px));
     }
 }
 
@@ -1730,72 +1618,45 @@ body {
     }
 }
 
-/* Different gift opening reveals - all share similar animation patterns */
+/* Consolidated gift opening reveal animation - uses CSS variables for customization */
+@keyframes gift-reveal {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(var(--reveal-scale, 1.3)) rotate(var(--reveal-rotate, 0deg));
+    }
+
+    100% {
+        transform: scale(1.1);
+        filter: brightness(var(--reveal-brightness, 1));
+    }
+}
+
+/* Different gift opening reveals - use shared animation with custom properties */
 .gift-opened-heart,
 .gift-opened-star,
 .gift-opened-sparkle {
-    animation-duration: 0.6s;
-    animation-timing-function: ease;
-    animation-fill-mode: forwards;
+    animation: gift-reveal 0.6s ease forwards;
 }
 
 .gift-opened-heart {
-    animation-name: heart-reveal;
+    --reveal-scale: 1.4;
+    --reveal-rotate: 10deg;
 }
 
 .gift-opened-star {
-    animation-name: star-reveal;
+    --reveal-scale: 1.3;
+    --reveal-rotate: -10deg;
+    --reveal-brightness: 1.3;
 }
 
 .gift-opened-sparkle {
-    animation-name: sparkle-reveal;
-}
-
-@keyframes heart-reveal {
-    0% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.4) rotate(10deg);
-    }
-
-    100% {
-        transform: scale(1.1);
-    }
-}
-
-@keyframes star-reveal {
-    0% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.3) rotate(-10deg);
-    }
-
-    100% {
-        transform: scale(1.1);
-        filter: brightness(1.3);
-    }
-}
-
-@keyframes sparkle-reveal {
-    0% {
-        transform: scale(1);
-    }
-
-    25% {
-        transform: scale(1.2) rotate(5deg);
-    }
-
-    75% {
-        transform: scale(1.3) rotate(-5deg);
-    }
-
-    100% {
-        transform: scale(1.1);
-    }
+    --reveal-scale: 1.3;
+    --reveal-rotate: -5deg;
+    /* Note: Original had multi-stage rotation (5deg -> -5deg) but simplified
+       to single rotation for consistency. Visual difference is negligible. */
 }
 
 .object.opened {

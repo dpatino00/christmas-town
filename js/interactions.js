@@ -801,6 +801,20 @@
         }, 3000);
     }
 
+    function createCatEar(side) {
+        const isLeft = side === 'left';
+        return createStyledElement('div', '', `
+            position: absolute;
+            top: -2px;
+            ${isLeft ? 'left' : 'right'}: 2px;
+            width: 3px;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: ${isLeft ? '50% 0 50% 0' : '0 50% 0 50%'};
+            transform: rotate(${isLeft ? '-20deg' : '20deg'});
+        `);
+    }
+
     function createCatShadows() {
         // Remove existing shadows
         document.querySelectorAll('.cat-shadow').forEach(el => el.remove());
@@ -833,29 +847,6 @@
                 border-radius: 60% 40% 40% 60%;
             `);
 
-            // Cat ears
-            const leftEar = createStyledElement('div', '', `
-                position: absolute;
-                top: -2px;
-                left: 2px;
-                width: 3px;
-                height: 4px;
-                background: rgba(0, 0, 0, 0.5);
-                border-radius: 50% 0 50% 0;
-                transform: rotate(-20deg);
-            `);
-
-            const rightEar = createStyledElement('div', '', `
-                position: absolute;
-                top: -2px;
-                right: 2px;
-                width: 3px;
-                height: 4px;
-                background: rgba(0, 0, 0, 0.5);
-                border-radius: 0 50% 0 50%;
-                transform: rotate(20deg);
-            `);
-
             // Cat tail (properly attached to body)
             const catTail = createStyledElement('div', '', `
                 position: absolute;
@@ -882,8 +873,9 @@
                 transform: rotate(-10deg);
             `);
 
-            catHead.appendChild(leftEar);
-            catHead.appendChild(rightEar);
+            // Assemble cat shadow
+            catHead.appendChild(createCatEar('left'));
+            catHead.appendChild(createCatEar('right'));
             catShadow.appendChild(catHead);
             catShadow.appendChild(catTail);
             catTail.appendChild(tailTip);
@@ -912,14 +904,7 @@
     // ========================================
     // Northern Lights System
     // ========================================
-    function triggerNorthernLights() {
-        const skyLayer = document.querySelector('.layer--sky');
-        if (!skyLayer) return;
-
-        // Check if already exists
-        if (document.getElementById('northern-lights')) return;
-
-        // Create container for multiple aurora layers
+    function createAuroraContainer() {
         const auroraContainer = document.createElement('div');
         auroraContainer.id = 'northern-lights';
         auroraContainer.className = 'northern-lights-container';
@@ -931,7 +916,17 @@
             auroraContainer.appendChild(layer);
         }
 
-        skyLayer.appendChild(auroraContainer);
+        return auroraContainer;
+    }
+
+    function triggerNorthernLights() {
+        const skyLayer = document.querySelector('.layer--sky');
+        if (!skyLayer) return;
+
+        // Check if already exists
+        if (document.getElementById('northern-lights')) return;
+
+        skyLayer.appendChild(createAuroraContainer());
 
         // Activate state
         state.northernLightsActive = true;
@@ -957,17 +952,7 @@
         if (state.northernLightsActive) {
             const skyLayer = document.querySelector('.layer--sky');
             if (skyLayer && !document.getElementById('northern-lights')) {
-                const auroraContainer = document.createElement('div');
-                auroraContainer.id = 'northern-lights';
-                auroraContainer.className = 'northern-lights-container';
-
-                for (let i = 1; i <= 3; i++) {
-                    const layer = document.createElement('div');
-                    layer.className = `aurora-layer aurora-layer-${i}`;
-                    auroraContainer.appendChild(layer);
-                }
-
-                skyLayer.appendChild(auroraContainer);
+                skyLayer.appendChild(createAuroraContainer());
                 elements.scene.classList.add('aurora-glow');
             }
         }

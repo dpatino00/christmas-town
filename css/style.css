@@ -1655,6 +1655,8 @@ body {
 .gift-opened-sparkle {
     --reveal-scale: 1.3;
     --reveal-rotate: -5deg;
+    /* Note: Original had multi-stage rotation (5deg -> -5deg) but simplified
+       to single rotation for consistency. Visual difference is negligible. */
 }
 
 .object.opened {

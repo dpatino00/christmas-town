@@ -127,7 +127,7 @@ Manual testing was performed to verify:
 ## Performance Characteristics
 
 - **No build step required**: Pure HTML/CSS/JS
-- **Small bundle size**: ~3700 lines total (down from ~3856)
+- **Small bundle size**: ~3570 lines total (down from ~3726)
 - **CSS animations**: Hardware-accelerated transforms
 - **Efficient DOM updates**: Minimal reflows and repaints
 - **localStorage**: Fast state persistence

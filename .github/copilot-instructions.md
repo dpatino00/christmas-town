@@ -49,7 +49,7 @@ This is an interactive Christmas-themed web application called "Space Cabin Chri
 ├── fragments/
 │   └── secret-message.html # htmx fragment for secret reveal
 └── assets/
-    └── asnow.png       # Snowman image asset
+    └── *.png           # Image assets (e.g., asnow.png)
 ```
 
 ## Key Features and Patterns

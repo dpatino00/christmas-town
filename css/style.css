@@ -231,10 +231,10 @@ body {
    ======================================== */
 .boston-skyline {
     position: absolute;
-    bottom: 25%;
+    bottom: 23%;
     left: 0;
     width: 100%;
-    height: 180px;
+    height: 220px;
     opacity: 0;
     transition: opacity 3s ease;
     pointer-events: none;
@@ -274,9 +274,10 @@ body {
     bottom: 0;
     left: 26%;
     width: 28px;
-    height: 145px;
+    height: 160px;
     background: linear-gradient(to right, #08080f 0%, #0e0e18 50%, #0a0a14 100%);
     clip-path: polygon(0% 2%, 100% 0%, 100% 100%, 0% 100%);
+    z-index: 3;
 }
 
 .boston-skyline__hancock::before {
@@ -300,8 +301,9 @@ body {
     bottom: 0;
     left: 34%;
     width: 35px;
-    height: 125px;
+    height: 140px;
     background: linear-gradient(to right, #0a0a14 0%, #101018 50%, #0c0c16 100%);
+    z-index: 3;
 }
 
 .boston-skyline__prudential::before {
@@ -336,9 +338,10 @@ body {
     bottom: 0;
     left: 44%;
     width: 24px;
-    height: 90px;
+    height: 105px;
     background: linear-gradient(to right, #09090f 0%, #0d0d17 50%, #0b0b15 100%);
     border-radius: 6px 6px 0 0;
+    z-index: 2;
 }
 
 .boston-skyline__huntington::before {
@@ -359,8 +362,9 @@ body {
     bottom: 0;
     right: 32%;
     width: 22px;
-    height: 85px;
+    height: 100px;
     background: linear-gradient(to right, #0a0a12 0%, #0e0e18 50%, #0c0c16 100%);
+    z-index: 1;
 }
 
 /* Custom House Tower - with pointed top and clock */
@@ -369,8 +373,9 @@ body {
     bottom: 0;
     right: 25%;
     width: 20px;
-    height: 75px;
+    height: 90px;
     background: linear-gradient(to right, #0b0b13 0%, #0f0f19 50%, #0d0d17 100%);
+    z-index: 2;
 }
 
 .boston-skyline__customhouse::before {
@@ -404,8 +409,9 @@ body {
     bottom: 0;
     right: 18%;
     width: 28px;
-    height: 68px;
+    height: 83px;
     background: linear-gradient(to right, #0c0c14 0%, #101018 50%, #0e0e16 100%);
+    z-index: 1;
 }
 
 /* Citgo Sign - iconic Kenmore landmark */
@@ -414,7 +420,7 @@ body {
     bottom: 0;
     left: 8%;
     width: 40px;
-    height: 72px;
+    height: 87px;
 }
 
 /* Building the sign sits on */
@@ -894,7 +900,7 @@ body {
 .cabin__door {
     position: absolute;
     bottom: 0;
-    left: 50%;
+    left: 55%;
     transform: translateX(-50%);
     width: 50px;
     height: 80px;
@@ -1163,7 +1169,7 @@ body {
 .tree {
     position: absolute;
     bottom: 18%;
-    right: 12%;
+    right: 15%;
     width: 140px;
     height: 200px;
     cursor: pointer;
@@ -1407,7 +1413,7 @@ body {
 
 .object--snowman {
     bottom: 21%;
-    left: 8%;
+    left: 12%;
     font-size: 40px;
     transition: all 0.5s ease;
     overflow: visible;
@@ -1442,7 +1448,7 @@ body {
 .gifts-container {
     position: absolute;
     bottom: 16%;
-    right: 8%;
+    right: 12%;
     width: 160px;
     height: 80px;
 }
@@ -1452,37 +1458,108 @@ body {
     transition: opacity 0.8s ease, transform 0.3s ease;
     bottom: auto;
     left: auto;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.gifts-container .object--gift:hover {
+    transform: scale(1.2) rotate(-8deg);
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5)) drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
 }
 
 .gifts-container #gift-1 {
-    bottom: 8px;
-    left: 15px;
-    font-size: 24px;
+    bottom: 5px;
+    left: 0px;
+    font-size: 18px;
+    animation: gift-float-1 3s ease-in-out infinite;
 }
 
 .gifts-container #gift-2 {
-    bottom: 20px;
-    right: 20px;
-    font-size: 28px;
+    bottom: 8px;
+    left: 62px;
+    font-size: 20px;
+    animation: gift-float-2 3.5s ease-in-out infinite;
 }
 
 .gifts-container #gift-3 {
-    bottom: 35px;
-    left: 45px;
-    font-size: 22px;
+    bottom: 32px;
+    left: 18px;
+    font-size: 16px;
+    animation: gift-float-3 3.2s ease-in-out infinite;
 }
 
 .gifts-container #gift-4 {
-    bottom: 12px;
-    right: 50px;
-    font-size: 26px;
+    bottom: 32px;
+    left: 50px;
+    font-size: 18px;
+    animation: gift-float-4 3.8s ease-in-out infinite;
 }
 
 .gifts-container #gift-5 {
-    bottom: 25px;
-    left: 85px;
-    font-size: 20px;
+    bottom: 2px;
+    left: 30px;
+    font-size: 16px;
+    animation: gift-float-5 3.3s ease-in-out infinite;
+}
+
+/* Subtle floating animations for gifts */
+@keyframes gift-float-1 {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+@keyframes gift-float-2 {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+@keyframes gift-float-3 {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+@keyframes gift-float-4 {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes gift-float-5 {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
 }
 
 /* Gift reveal animations */
@@ -1877,46 +1954,13 @@ body {
    ======================================== */
 @media (max-width: 768px) {
     .cabin {
-        width: 250px;
-        height: 180px;
-        bottom: 24%;
-    }
-
-    .cabin__body {
-        width: 220px;
-        height: 110px;
-    }
-
-    .cabin__roof {
-        width: 250px;
-    }
-
-    .cabin__roof::before {
-        border-left-width: 125px;
-        border-right-width: 125px;
-        border-bottom-width: 70px;
-    }
-
-    .cabin__chimney {
-        left: 30px;
-        width: 20px;
-    }
-
-    .cabin__door {
-        width: 40px;
-        height: 60px;
-        left: 15px;
-    }
-
-    .cabin__window--side {
-        width: 35px;
-        height: 40px;
+        transform: translateX(-50%) scale(0.78);
+        transform-origin: bottom center;
     }
 
     .tree {
-        right: 8%;
-        width: 60px;
-        height: 100px;
+        transform: scale(0.65);
+        transform-origin: bottom center;
     }
 
     .object {
@@ -1925,6 +1969,15 @@ body {
 
     .object--snowman {
         font-size: 32px;
+        transform: scale(0.8);
+        transform-origin: bottom center;
+    }
+
+    .snowman-image {
+        width: 95px;
+        max-height: 95px;
+        top: -88px;
+        left: -24px;
     }
 
     /* Controls adjustment for tablets */
@@ -1959,75 +2012,20 @@ body {
     /* Boston skyline adjustments */
     .boston-skyline {
         transform: scale(0.8);
+        transform-origin: bottom center;
+    }
+
+    .gifts-container {
+        transform: scale(0.8);
+        transform-origin: bottom right;
     }
 }
 
 @media (max-width: 480px) {
     .cabin {
-        width: 200px;
-        height: 150px;
-        bottom: 26%;
-    }
-
-    .cabin__body {
-        width: 180px;
-        height: 90px;
-        left: 10px;
-    }
-
-    .cabin__roof {
-        width: 200px;
-    }
-
-    .cabin__roof::before {
-        border-left-width: 100px;
-        border-right-width: 100px;
-        border-bottom-width: 60px;
-    }
-
-    .cabin__chimney {
-        left: 20px;
-        width: 16px;
-        height: 30px;
-    }
-
-    .cabin__chimney::before {
-        border-width: 3px;
-    }
-
-    .cabin__window--main {
-        width: 60px;
-        height: 50px;
-        left: 20px;
-    }
-
-    .cabin__window--side {
-        width: 30px;
-        height: 35px;
-        top: 20px;
-    }
-
-    .cabin__door {
-        width: 35px;
-        height: 55px;
-        left: 10px;
-        bottom: 0;
-    }
-
-    .cabin__wreath {
-        width: 15px;
-        height: 15px;
-        top: 8px;
-    }
-
-    .cabin__lights {
-        width: 180px;
-        top: -8px;
-    }
-
-    .light {
-        width: 6px;
-        height: 8px;
+        transform: translateX(-50%) scale(0.625);
+        transform-origin: bottom center;
+        bottom: 24%;
     }
 
     /* Controls on mobile */
@@ -2077,6 +2075,12 @@ body {
         display: none;
     }
 
+    .gifts-container {
+        transform: scale(0.65);
+        transform-origin: bottom right;
+        bottom: 18%;
+    }
+
     /* Mountains on mobile */
     .mountains {
         height: 120px;
@@ -2092,16 +2096,15 @@ body {
 
     /* Tree on mobile */
     .tree {
-        right: 5%;
-        width: 50px;
-        height: 80px;
-        bottom: 22%;
+        transform: scale(0.5);
+        transform-origin: bottom center;
+        bottom: 24%;
     }
 
     /* Boston skyline smaller on mobile */
     .boston-skyline {
-        transform: scale(0.6);
-        bottom: 20%;
+        transform: scale(0.5);
+        transform-origin: bottom center;
     }
 
     /* Snowflakes smaller on mobile */
@@ -2116,51 +2119,24 @@ body {
 
     .object--snowman {
         font-size: 28px;
+        transform: scale(0.7);
+        transform-origin: bottom center;
+    }
+
+    .snowman-image {
+        width: 75px;
+        max-height: 75px;
+        top: -70px;
+        left: -18px;
     }
 }
 
 /* Extra small phones */
 @media (max-width: 360px) {
     .cabin {
-        width: 170px;
-        height: 130px;
-        bottom: 28%;
-    }
-
-    .cabin__body {
-        width: 150px;
-        height: 75px;
-        left: 10px;
-    }
-
-    .cabin__roof {
-        width: 170px;
-    }
-
-    .cabin__roof::before {
-        border-left-width: 85px;
-        border-right-width: 85px;
-        border-bottom-width: 50px;
-    }
-
-    .cabin__window--main {
-        width: 50px;
-        height: 42px;
-        left: 18px;
-    }
-
-    .cabin__door {
-        width: 30px;
-        height: 48px;
-    }
-
-    .cabin__lights {
-        width: 150px;
-    }
-
-    .light {
-        width: 5px;
-        height: 7px;
+        transform: translateX(-50%) scale(0.53);
+        transform-origin: bottom center;
+        bottom: 26%;
     }
 
     #secret-reveal {
@@ -2176,7 +2152,34 @@ body {
     }
 
     .tree {
-        width: 40px;
-        height: 65px;
+        transform: scale(0.4);
+        transform-origin: bottom center;
+    }
+
+    .object--snowman {
+        transform: scale(0.6);
+        transform-origin: bottom center;
+    }
+
+    .snowman-image {
+        width: 60px;
+        max-height: 60px;
+        top: -56px;
+        left: -14px;
+    }
+
+    .object--snowman {
+        transform: scale(0.6);
+        transform-origin: bottom center;
+    }
+
+    .boston-skyline {
+        transform: scale(0.4);
+        transform-origin: bottom center;
+    }
+
+    .gifts-container {
+        transform: scale(0.55);
+        transform-origin: bottom right;
     }
 }

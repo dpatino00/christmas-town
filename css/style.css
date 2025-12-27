@@ -175,6 +175,153 @@ body {
 }
 
 /* ========================================
+   Northern Lights
+   ======================================== */
+.northern-lights-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60%;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0;
+    animation: aurora-fade-in 4s ease forwards;
+}
+
+.aurora-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    mix-blend-mode: screen;
+}
+
+/* Layer 1: Primary green curtain with vertical waves */
+.aurora-layer-1 {
+    background:
+        radial-gradient(ellipse 800px 400px at 20% 0%, rgba(50, 255, 150, 0.4) 0%, transparent 50%),
+        radial-gradient(ellipse 600px 350px at 50% 10%, rgba(100, 255, 180, 0.3) 0%, transparent 50%),
+        radial-gradient(ellipse 700px 400px at 80% 0%, rgba(80, 255, 160, 0.35) 0%, transparent 50%);
+    filter: blur(30px);
+    animation: aurora-wave-1 15s ease-in-out infinite;
+}
+
+/* Layer 2: Blue-purple accents with different timing */
+.aurora-layer-2 {
+    background:
+        radial-gradient(ellipse 600px 300px at 35% 5%, rgba(100, 180, 255, 0.25) 0%, transparent 50%),
+        radial-gradient(ellipse 500px 280px at 70% 0%, rgba(180, 120, 255, 0.2) 0%, transparent 50%);
+    filter: blur(40px);
+    animation: aurora-wave-2 18s ease-in-out infinite 2s;
+}
+
+/* Layer 3: Subtle pink/magenta highlights */
+.aurora-layer-3 {
+    background:
+        radial-gradient(ellipse 400px 250px at 15% 10%, rgba(255, 100, 200, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse 450px 280px at 85% 5%, rgba(200, 150, 255, 0.18) 0%, transparent 50%);
+    filter: blur(50px);
+    animation: aurora-wave-3 22s ease-in-out infinite 4s;
+}
+
+@keyframes aurora-fade-in {
+    0% {
+        opacity: 0;
+        transform: scaleY(0.6);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+
+/* Wave animation 1: Horizontal movement with vertical stretch */
+@keyframes aurora-wave-1 {
+
+    0%,
+    100% {
+        transform: translateX(0%) skewX(-2deg) scaleY(1);
+        opacity: 1;
+    }
+
+    25% {
+        transform: translateX(-5%) skewX(3deg) scaleY(1.1);
+        opacity: 0.9;
+    }
+
+    50% {
+        transform: translateX(3%) skewX(-1deg) scaleY(0.95);
+        opacity: 1;
+    }
+
+    75% {
+        transform: translateX(-3%) skewX(2deg) scaleY(1.05);
+        opacity: 0.95;
+    }
+}
+
+/* Wave animation 2: Counter movement for depth */
+@keyframes aurora-wave-2 {
+
+    0%,
+    100% {
+        transform: translateX(0%) skewX(1deg) scaleY(1) scaleX(1);
+        opacity: 0.8;
+    }
+
+    30% {
+        transform: translateX(4%) skewX(-2deg) scaleY(1.08) scaleX(1.02);
+        opacity: 0.9;
+    }
+
+    60% {
+        transform: translateX(-4%) skewX(2deg) scaleY(0.92) scaleX(0.98);
+        opacity: 0.85;
+    }
+
+    90% {
+        transform: translateX(2%) skewX(-1deg) scaleY(1.03) scaleX(1.01);
+        opacity: 0.8;
+    }
+}
+
+/* Wave animation 3: Slow pulse and drift */
+@keyframes aurora-wave-3 {
+
+    0%,
+    100% {
+        transform: translateX(0%) translateY(0%) skewX(0deg) scaleY(1);
+        opacity: 0.7;
+    }
+
+    33% {
+        transform: translateX(-3%) translateY(-2%) skewX(3deg) scaleY(1.1);
+        opacity: 0.85;
+    }
+
+    66% {
+        transform: translateX(4%) translateY(1%) skewX(-2deg) scaleY(0.9);
+        opacity: 0.75;
+    }
+}
+
+/* Aurora glow effect on scene */
+.scene.aurora-glow .cabin {
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.4),
+        0 -5px 30px rgba(100, 255, 180, 0.08);
+}
+
+.scene.aurora-glow .ground::before {
+    box-shadow:
+        inset 0 10px 30px rgba(100, 255, 180, 0.03),
+        inset 0 -5px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* ========================================
    Mountains / Horizon
    ======================================== */
 .mountains {

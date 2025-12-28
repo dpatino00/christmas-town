@@ -1144,6 +1144,24 @@
                 elements.secretReveal.style.pointerEvents = 'auto';
                 // Show the overlay parent
                 elements.secretReveal.parentElement.style.display = 'flex';
+                
+                // Add event handlers to the loaded overlay
+                const overlay = elements.secretReveal.querySelector('.secret-message__overlay');
+                const closeButton = elements.secretReveal.querySelector('.secret-message__close');
+                
+                if (overlay) {
+                    // Close when clicking the overlay background (not the content)
+                    overlay.addEventListener('click', function(e) {
+                        if (e.target === overlay) {
+                            closeSecret();
+                        }
+                    });
+                }
+                
+                if (closeButton) {
+                    // Add click and keyboard handlers to close button
+                    addClickAndKeyListeners(closeButton, closeSecret);
+                }
             }
         });
 
@@ -1176,16 +1194,9 @@
         elements.snowToggle?.addEventListener('click', cycleSnowIntensity);
         elements.resetBtn?.addEventListener('click', resetScene);
 
-        // Close secret on escape or clicking overlay
+        // Close secret on escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeSecret();
-        });
-
-        // Close secret when clicking the overlay
-        elements.secretReveal?.addEventListener('click', (e) => {
-            if (e.target === elements.secretReveal) {
-                closeSecret();
-            }
         });
     }
 
@@ -1204,13 +1215,6 @@
         }
         // Otherwise htmx will handle the content loading
     }
-
-    // Listen for htmx content swap to enable pointer-events
-    document.body.addEventListener('htmx:afterSwap', function (evt) {
-        if (evt.detail.target.id === 'secret-reveal') {
-            elements.secretReveal.style.pointerEvents = 'auto';
-        }
-    });
 
     // ========================================
     // Initialize

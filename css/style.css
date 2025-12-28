@@ -2034,6 +2034,7 @@ body {
     max-width: 500px;
     text-align: center;
     animation: reveal-in 0.5s ease;
+    pointer-events: auto;
 }
 
 .secret-message__emoji {

@@ -22,6 +22,9 @@
     // Total number of slides
     const TOTAL_SLIDES = 6;
 
+    // Store observer reference for cleanup
+    let slideObserver = null;
+
     // ======================================== 
     // State Persistence
     // ======================================== 
@@ -262,6 +265,19 @@
                 }
             }
         }
+        
+        // Handle window resize for responsive observer management
+        let resizeTimeout = null;
+        window.addEventListener('resize', () => {
+            // Debounce resize events
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(handleResize, 250);
+        });
+    }
+
+    // Handle window resize to re-initialize scroll animations
+    function handleResize() {
+        initScrollAnimations();
     }
 
     // ======================================== 
@@ -285,6 +301,12 @@
     // Scroll-Based Animations for Mobile
     // ======================================== 
     function initScrollAnimations() {
+        // Clean up any existing observer
+        if (slideObserver) {
+            slideObserver.disconnect();
+            slideObserver = null;
+        }
+
         // Only run on mobile (where slides are stacked)
         if (window.innerWidth > 768) return;
 
@@ -294,7 +316,7 @@
             threshold: 0.3 // Trigger when 30% of slide is visible
         };
 
-        const slideObserver = new IntersectionObserver((entries) => {
+        slideObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const slide = entry.target;

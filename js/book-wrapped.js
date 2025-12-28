@@ -267,7 +267,7 @@
         }
         
         // Handle window resize for responsive observer management
-        let resizeTimeout;
+        let resizeTimeout = null;
         window.addEventListener('resize', () => {
             // Debounce resize events
             clearTimeout(resizeTimeout);

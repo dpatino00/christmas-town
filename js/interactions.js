@@ -9,10 +9,10 @@
     // ========================================
     // Utility Functions
     // ========================================
-    
+
     // Configuration constants
     const SNOWMAN_IMAGE_PATH = './assets/asnow.png';
-    
+
     function injectStyles(styleId, cssText) {
         if (!document.querySelector(`#${styleId}`)) {
             const style = document.createElement('style');
@@ -37,7 +37,7 @@
     const defaultState = {
         windowLit: false,
         sideWindowLit: false,
-        lightsMode: 'off', // off, on, chase, warm
+        lightsOn: false,
         treeDecorations: 0,
         giftsOpened: [],
         giftsRevealed: 0, // New: track how many gifts have appeared
@@ -46,7 +46,8 @@
         secretFound: false,
         discoveries: 0,
         snowIntensity: 'medium', // light, medium, heavy
-        catAdopted: false // Track if cat has been adopted from gift
+        catAdopted: false, // Track if cat has been adopted from gift
+        northernLightsActive: false // Track if Northern Lights are active
     };
 
     let state = loadState();
@@ -143,7 +144,7 @@
 
     function initSnow() {
         const config = getSnowConfig();
-        
+
         // Create initial batch
         for (let i = 0; i < config.initialCount; i++) {
             setTimeout(() => createSnowflake(), Math.random() * 3000);
@@ -226,18 +227,13 @@
     // ========================================
     // String Lights Interactions
     // ========================================
-    const lightModes = ['off', 'on', 'chase', 'warm'];
+    function toggleLights() {
+        state.lightsOn = !state.lightsOn;
 
-    function cycleLights() {
-        const currentIndex = lightModes.indexOf(state.lightsMode);
-        state.lightsMode = lightModes[(currentIndex + 1) % lightModes.length];
-
-        // Remove all mode classes
-        elements.stringLights.classList.remove('on', 'chase', 'warm');
-
-        // Add new mode class
-        if (state.lightsMode !== 'off') {
-            elements.stringLights.classList.add(state.lightsMode);
+        if (state.lightsOn) {
+            elements.stringLights.classList.add('on');
+        } else {
+            elements.stringLights.classList.remove('on');
         }
 
         if (!state.lightsToggled) {
@@ -251,10 +247,10 @@
     // ========================================
     // Tree Decoration
     // ========================================
-    const ornamentEmojis = ['🔴', '🟡', '🔵', '🟢', '🟣', '⚪'];
+    const ornamentColors = ['#FF3366', '#FFD700', '#3399FF', '#4CAF50', '#9C27B0', '#FF6B35', '#00BCD4', '#FF9800'];
 
     function decorateTree() {
-        if (state.treeDecorations < 6) {
+        if (state.treeDecorations < 8) {
             state.treeDecorations++;
             addOrnament(state.treeDecorations);
 
@@ -263,7 +259,7 @@
             }
 
             // Light up star when fully decorated
-            if (state.treeDecorations >= 6) {
+            if (state.treeDecorations >= 8) {
                 elements.tree.classList.add('decorated');
                 if (!state.treeFullyDecorated) {
                     state.treeFullyDecorated = true;
@@ -283,7 +279,7 @@
     function addOrnament(index) {
         const ornament = document.createElement('span');
         ornament.className = `ornament ornament--${index}`;
-        ornament.textContent = ornamentEmojis[index - 1];
+        ornament.style.setProperty('--ornament-color', ornamentColors[index - 1]);
         elements.treeOrnaments.appendChild(ornament);
 
         // Animate in
@@ -294,7 +290,7 @@
         for (let i = 1; i <= state.treeDecorations; i++) {
             addOrnament(i);
         }
-        if (state.treeDecorations >= 6) {
+        if (state.treeDecorations >= 8) {
             elements.tree.classList.add('decorated');
         }
     }
@@ -304,11 +300,29 @@
     // ========================================
     const giftReveals = [
         { emoji: '💝', className: 'heart', message: 'You always wanted a little friend to keep us company...', special: 'cat' },
-        { emoji: '⭐', className: 'star', message: 'You\'re my star!' },
-        { emoji: '✨', className: 'sparkle', message: 'You make life sparkle!' },
-        { emoji: '🌟', className: 'star', message: 'Shining bright together!' },
-        { emoji: '💎', className: 'sparkle', message: 'You\'re precious to me!' }
+        { emoji: '⭐', className: 'star', message: 'You\'re my star!', special: 'constellation' },
+        { emoji: '📮', className: 'postcards', message: 'Postcards from our adventures...', special: 'postcards' },
+        { emoji: '🌟', className: 'star', message: 'A quiet moment under the stars.', special: 'northernLights' },
+        { emoji: '�', className: 'sparkle', message: 'Your year in books awaits...', special: 'bookWrapped' }
     ];
+
+    // Capricorn constellation data (based on actual star coordinates)
+    const CAPRICORN_CONSTELLATION = {
+        points: [
+            { x: 15, y: 10 },  // Alpha² Capricorni (α² Cap) - RA 20h 18m, Dec -12° 30′
+            { x: 17, y: 14 },  // Beta Capricorni (β Cap) - RA 20h 21m, Dec -14° 47′  
+            { x: 47, y: 13 },  // Theta Capricorni (θ Cap) - RA 21h 06m, Dec -14° 17′
+            { x: 62, y: 29 },  // Zeta Capricorni (ζ Cap) - RA 21h 27m, Dec -22° 25′
+            { x: 71, y: 18 },  // Gamma Capricorni (γ Cap) - RA 21h 40m, Dec -16° 49′
+            { x: 75, y: 17 },  // Delta Capricorni (δ Cap) - RA 21h 47m, Dec -16° 08′
+            { x: 49, y: 35 }   // Omega Capricorni (ω Cap) - RA 21h 08m, Dec -25° 28′
+        ],
+        edges: [
+            [0, 1], [1, 2], [2, 4], [4, 5], // Top curved line: α²→β→θ→γ→δ
+            [1, 6], [6, 3], [3, 4]  // Bottom triangle: β→ω→ζ→γ
+        ],
+        glyph: { x: 45, y: 5, text: '♑' }
+    };
 
     function revealNextGift() {
         const nextGiftIndex = state.giftsRevealed || 0;
@@ -326,6 +340,7 @@
     function openGift(giftId) {
         const giftIndex = parseInt(giftId.split('-')[1]) - 1;
         const gift = document.getElementById(giftId);
+        const reveal = giftReveals[giftIndex];
 
         if (!state.giftsOpened.includes(giftId)) {
             state.giftsOpened.push(giftId);
@@ -342,6 +357,22 @@
                 setTimeout(() => {
                     summonCat();
                 }, 1500);
+            } else if (reveal.special === 'constellation') {
+                setTimeout(() => {
+                    triggerCapricornConstellation();
+                }, 800);
+            } else if (reveal.special === 'postcards') {
+                setTimeout(() => {
+                    loadPostcards();
+                }, 600);
+            } else if (reveal.special === 'northernLights' && !state.northernLightsActive) {
+                setTimeout(() => {
+                    triggerNorthernLights();
+                }, 800);
+            } else if (reveal.special === 'bookWrapped') {
+                setTimeout(() => {
+                    openBookWrapped();
+                }, 800);
             }
 
             incrementDiscoveries();
@@ -354,6 +385,16 @@
             // If it's the cat gift and cat exists, make it do something cute
             if (reveal.special === 'cat' && state.catAdopted) {
                 makeKittyCute();
+            } else if (reveal.special === 'constellation') {
+                setTimeout(() => {
+                    triggerCapricornConstellation();
+                }, 400);
+            } else if (reveal.special === 'postcards') {
+                loadPostcards();
+            } else if (reveal.special === 'northernLights' && state.northernLightsActive) {
+                pulseNorthernLights();
+            } else if (reveal.special === 'bookWrapped') {
+                openBookWrapped();
             }
 
             gift.style.animation = 'none';
@@ -363,6 +404,10 @@
     }
 
     function showGiftMessage(message) {
+        // Remove any existing gift messages first
+        const existingMessages = document.querySelectorAll('.gift-message');
+        existingMessages.forEach(msg => msg.remove());
+
         // Create temporary message element
         const messageEl = createStyledElement('div', 'gift-message', `
             position: fixed;
@@ -426,6 +471,219 @@
         if (state.catAdopted) {
             createCatShadows();
         }
+    }
+
+    // ========================================
+    // Postcards Gift System
+    // ========================================
+    function loadPostcards() {
+        // Fetch and display the postcards fragment
+        fetch('./fragments/space-postcards.html')
+            .then(response => response.text())
+            .then(html => {
+                elements.secretReveal.innerHTML = html;
+                // Trigger overlay display
+                elements.secretReveal.parentElement.style.display = 'flex';
+
+                // Move modal to body for proper centering
+                const modal = document.getElementById('postcard-modal');
+                if (modal && modal.parentElement !== document.body) {
+                    document.body.appendChild(modal);
+                }
+
+                // Attach click handlers to location cards
+                setTimeout(() => {
+                    const locationCards = document.querySelectorAll('.location-card');
+                    const enlargedContainer = document.getElementById('postcard-enlarged');
+
+                    locationCards.forEach(card => {
+                        card.addEventListener('click', function (e) {
+                            e.stopPropagation();
+
+                            const location = this.dataset.location;
+
+                            // Get the postcard template for this location
+                            const template = document.querySelector(`[data-template="${location}"]`);
+                            if (template) {
+                                // Clone the postcard back
+                                const clone = template.cloneNode(true);
+
+                                // Clear and add clone to modal
+                                enlargedContainer.innerHTML = '';
+                                enlargedContainer.appendChild(clone);
+
+                                // Show modal
+                                modal.style.display = 'flex';
+                            }
+                        });
+                    });
+
+                    // Close modal when clicking backdrop
+                    const backdrop = document.querySelector('.postcard-modal-backdrop');
+                    if (backdrop) {
+                        backdrop.addEventListener('click', function () {
+                            modal.style.display = 'none';
+                        });
+                    }
+
+                    // Add global close function
+                    window.closePostcardsCollection = function () {
+                        // Remove modal from DOM
+                        const modal = document.getElementById('postcard-modal');
+                        if (modal) {
+                            modal.remove();
+                        }
+                        // Then remove the collection
+                        const collection = document.querySelector('.space-postcards');
+                        if (collection) {
+                            htmx.remove(collection);
+                        }
+                        // Also hide overlay
+                        if (elements.secretReveal && elements.secretReveal.parentElement) {
+                            elements.secretReveal.parentElement.style.display = 'none';
+                        }
+                    };
+                }, 100);
+            })
+            .catch(error => {
+                console.error('Error loading postcards:', error);
+                // Fallback message
+                showGiftMessage('Check your mailbox for postcards from our adventures! 📮');
+            });
+    }
+
+    // ========================================
+    // Constellation Gift System
+    // ========================================
+    function triggerCapricornConstellation() {
+        // Remove any existing constellation
+        const existing = document.getElementById('capricorn-constellation');
+        if (existing) {
+            existing.remove();
+        }
+
+        // Create constellation container
+        const constellationContainer = createStyledElement('div', 'constellation-container', `
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            pointer-events: none;
+            z-index: 15;
+        `);
+        constellationContainer.id = 'capricorn-constellation';
+
+        // Create SVG
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 100 60');
+        svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+        svg.style.cssText = `
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        `;
+
+        // Add stars (points)
+        CAPRICORN_CONSTELLATION.points.forEach((point, index) => {
+            const star = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            star.setAttribute('cx', point.x);
+            star.setAttribute('cy', point.y);
+            star.setAttribute('r', '0.8');
+            star.setAttribute('fill', '#fff');
+            star.setAttribute('opacity', '0');
+            star.classList.add('constellation-star');
+            star.style.animationDelay = (index * 0.15) + 's';
+            svg.appendChild(star);
+        });
+
+        // Add constellation lines
+        CAPRICORN_CONSTELLATION.edges.forEach((edge, index) => {
+            const [startIdx, endIdx] = edge;
+            const start = CAPRICORN_CONSTELLATION.points[startIdx];
+            const end = CAPRICORN_CONSTELLATION.points[endIdx];
+
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', start.x);
+            line.setAttribute('y1', start.y);
+            line.setAttribute('x2', end.x);
+            line.setAttribute('y2', end.y);
+            line.setAttribute('stroke', 'rgba(255, 255, 255, 0.6)');
+            line.setAttribute('stroke-width', '0.3');
+            line.setAttribute('opacity', '0');
+            line.classList.add('constellation-line');
+            line.style.animationDelay = (CAPRICORN_CONSTELLATION.points.length * 0.15 + index * 0.1) + 's';
+            svg.appendChild(line);
+        });
+
+        // Add Capricorn glyph
+        const glyph = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        glyph.setAttribute('x', CAPRICORN_CONSTELLATION.glyph.x);
+        glyph.setAttribute('y', CAPRICORN_CONSTELLATION.glyph.y);
+        glyph.setAttribute('fill', '#ffaa44');
+        glyph.setAttribute('font-size', '4');
+        glyph.setAttribute('text-anchor', 'middle');
+        glyph.setAttribute('opacity', '0');
+        glyph.classList.add('constellation-glyph');
+        glyph.textContent = CAPRICORN_CONSTELLATION.glyph.text;
+        const glyphDelay = (CAPRICORN_CONSTELLATION.points.length * 0.15 + CAPRICORN_CONSTELLATION.edges.length * 0.1 + 0.3);
+        glyph.style.animationDelay = glyphDelay + 's';
+        svg.appendChild(glyph);
+
+        constellationContainer.appendChild(svg);
+
+        // Add to sky layer
+        const skyLayer = document.querySelector('.layer--sky');
+        if (skyLayer) {
+            skyLayer.appendChild(constellationContainer);
+        } else {
+            const overlayLayer = document.querySelector('.layer--overlay');
+            if (overlayLayer) {
+                overlayLayer.appendChild(constellationContainer);
+            }
+        }
+
+        // Inject constellation animations
+        injectStyles('constellation-animations', `
+            @keyframes constellation-star-appear {
+                0% { opacity: 0; transform: scale(0.5); }
+                50% { opacity: 1; transform: scale(1.2); }
+                100% { opacity: 0.8; transform: scale(1); }
+            }
+            @keyframes constellation-line-draw {
+                0% { opacity: 0; }
+                100% { opacity: 0.6; }
+            }
+            @keyframes constellation-glyph-pulse {
+                0% { opacity: 0; transform: scale(0.8); }
+                30% { opacity: 1; transform: scale(1.3); }
+                70% { opacity: 1; transform: scale(1.1); }
+                100% { opacity: 0.9; transform: scale(1); }
+            }
+            .constellation-star {
+                animation: constellation-star-appear 0.6s ease-out forwards;
+            }
+            .constellation-line {
+                animation: constellation-line-draw 0.4s ease-out forwards;
+            }
+            .constellation-glyph {
+                animation: constellation-glyph-pulse 1.2s ease-out forwards;
+            }
+            @keyframes constellation-fade-out {
+                0% { opacity: 1; }
+                100% { opacity: 0; }
+            }
+        `);
+
+        // Auto-remove after animation completes
+        setTimeout(() => {
+            constellationContainer.style.animation = 'constellation-fade-out 1s ease-out forwards';
+            setTimeout(() => {
+                if (constellationContainer.parentNode) {
+                    constellationContainer.remove();
+                }
+            }, 1000);
+        }, 4000);
     }
 
     // ========================================
@@ -544,6 +802,20 @@
         }, 3000);
     }
 
+    function createCatEar(side) {
+        const isLeft = side === 'left';
+        return createStyledElement('div', '', `
+            position: absolute;
+            top: -2px;
+            ${isLeft ? 'left' : 'right'}: 2px;
+            width: 3px;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: ${isLeft ? '50% 0 50% 0' : '0 50% 0 50%'};
+            transform: rotate(${isLeft ? '-20deg' : '20deg'});
+        `);
+    }
+
     function createCatShadows() {
         // Remove existing shadows
         document.querySelectorAll('.cat-shadow').forEach(el => el.remove());
@@ -576,29 +848,6 @@
                 border-radius: 60% 40% 40% 60%;
             `);
 
-            // Cat ears
-            const leftEar = createStyledElement('div', '', `
-                position: absolute;
-                top: -2px;
-                left: 2px;
-                width: 3px;
-                height: 4px;
-                background: rgba(0, 0, 0, 0.5);
-                border-radius: 50% 0 50% 0;
-                transform: rotate(-20deg);
-            `);
-
-            const rightEar = createStyledElement('div', '', `
-                position: absolute;
-                top: -2px;
-                right: 2px;
-                width: 3px;
-                height: 4px;
-                background: rgba(0, 0, 0, 0.5);
-                border-radius: 0 50% 0 50%;
-                transform: rotate(20deg);
-            `);
-
             // Cat tail (properly attached to body)
             const catTail = createStyledElement('div', '', `
                 position: absolute;
@@ -625,8 +874,9 @@
                 transform: rotate(-10deg);
             `);
 
-            catHead.appendChild(leftEar);
-            catHead.appendChild(rightEar);
+            // Assemble cat shadow
+            catHead.appendChild(createCatEar('left'));
+            catHead.appendChild(createCatEar('right'));
             catShadow.appendChild(catHead);
             catShadow.appendChild(catTail);
             catTail.appendChild(tailTip);
@@ -650,6 +900,74 @@
             shadow.style.animation = 'cat-shadow-sit 1s ease-in-out 3';
         });
         showGiftMessage("Your kitty says hello! 🐱💕");
+    }
+
+    // ========================================
+    // Northern Lights System
+    // ========================================
+    function createAuroraContainer() {
+        const auroraContainer = document.createElement('div');
+        auroraContainer.id = 'northern-lights';
+        auroraContainer.className = 'northern-lights-container';
+
+        // Create 3 overlapping aurora layers for depth and realism
+        for (let i = 1; i <= 3; i++) {
+            const layer = document.createElement('div');
+            layer.className = `aurora-layer aurora-layer-${i}`;
+            auroraContainer.appendChild(layer);
+        }
+
+        return auroraContainer;
+    }
+
+    function triggerNorthernLights() {
+        const skyLayer = document.querySelector('.layer--sky');
+        if (!skyLayer) return;
+
+        // Check if already exists
+        if (document.getElementById('northern-lights')) return;
+
+        skyLayer.appendChild(createAuroraContainer());
+
+        // Activate state
+        state.northernLightsActive = true;
+        saveState();
+
+        // Add subtle glow to cabin and snow
+        elements.scene.classList.add('aurora-glow');
+
+        showGiftMessage("The sky dances with light... 🌌");
+    }
+
+    function pulseNorthernLights() {
+        const lights = document.getElementById('northern-lights');
+        if (lights) {
+            lights.style.animation = 'none';
+            lights.offsetHeight; // Trigger reflow
+            lights.style.animation = '';
+            showGiftMessage("The aurora brightens... ✨");
+        }
+    }
+
+    function restoreNorthernLights() {
+        if (state.northernLightsActive) {
+            const skyLayer = document.querySelector('.layer--sky');
+            if (skyLayer && !document.getElementById('northern-lights')) {
+                skyLayer.appendChild(createAuroraContainer());
+                elements.scene.classList.add('aurora-glow');
+            }
+        }
+    }
+
+    // ========================================
+    // Book Wrapped - Final Gift
+    // ========================================
+    function openBookWrapped() {
+        // Open in new window/tab
+        window.open('book-wrapped.html', '_blank');
+
+        // Alternative: Open in same window
+        // window.location.href = 'book-wrapped.html';
     }
 
     // ========================================
@@ -764,8 +1082,8 @@
         updateSmoke();
 
         // Lights
-        if (state.lightsMode !== 'off') {
-            elements.stringLights.classList.add(state.lightsMode);
+        if (state.lightsOn) {
+            elements.stringLights.classList.add('on');
         }
 
         // Tree
@@ -784,6 +1102,9 @@
         // Snow intensity
         elements.scene.classList.add('snow-' + state.snowIntensity);
 
+        // Northern Lights
+        restoreNorthernLights();
+
         // Warmth & counter
         updateWarmth();
         updateCounter();
@@ -794,7 +1115,7 @@
     // ========================================
     function addClickAndKeyListeners(element, callback) {
         if (!element) return;
-        
+
         element.addEventListener('click', callback);
         element.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
@@ -813,7 +1134,7 @@
         addClickAndKeyListeners(elements.door, knockDoor);
 
         // String lights
-        addClickAndKeyListeners(elements.stringLights, cycleLights);
+        addClickAndKeyListeners(elements.stringLights, toggleLights);
 
         // Tree
         addClickAndKeyListeners(elements.tree, decorateTree);
@@ -827,30 +1148,43 @@
         // Snowman
         elements.snowman?.addEventListener('click', waveToSnowman);
 
-        // Secret spot (htmx fallback)
-        elements.secretSpot?.addEventListener('click', (e) => {
-            // Check if htmx will handle it
-            if (typeof htmx === 'undefined') {
-                e.preventDefault();
-                showSecretFallback();
-            } else {
-                // htmx handles it, but track discovery
-                if (!state.secretFound) {
-                    state.secretFound = true;
-                    incrementDiscoveries();
-                    saveState();
-                }
-            }
-        });
+        // Secret spot - handle both htmx and fallback
+        elements.secretSpot?.addEventListener('click', handleSecretClick);
+
+        // Also add keyboard support for secret spot
+        addClickAndKeyListeners(elements.secretSpot, handleSecretClick);
 
         // Controls
         elements.snowToggle?.addEventListener('click', cycleSnowIntensity);
         elements.resetBtn?.addEventListener('click', resetScene);
 
-        // Close secret on escape
+        // Close secret on escape or clicking overlay
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeSecret();
         });
+
+        // Close secret when clicking the overlay
+        elements.secretReveal?.addEventListener('click', (e) => {
+            if (e.target === elements.secretReveal) {
+                closeSecret();
+            }
+        });
+    }
+
+    function handleSecretClick(e) {
+        // Track discovery regardless of htmx
+        if (!state.secretFound) {
+            state.secretFound = true;
+            incrementDiscoveries();
+            saveState();
+        }
+
+        // If htmx is not available, show fallback
+        if (typeof htmx === 'undefined') {
+            e.preventDefault();
+            showSecretFallback();
+        }
+        // Otherwise htmx will handle the content loading
     }
 
     // ========================================
@@ -863,8 +1197,6 @@
 
         // Expose close function for htmx fragment
         window.closeSecret = closeSecret;
-
-        console.log('🎄 Space Cabin Christmas loaded! Click around to discover...');
     }
 
     // Start when DOM is ready

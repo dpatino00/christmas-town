@@ -175,6 +175,153 @@ body {
 }
 
 /* ========================================
+   Northern Lights
+   ======================================== */
+.northern-lights-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60%;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0;
+    animation: aurora-fade-in 4s ease forwards;
+}
+
+.aurora-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    mix-blend-mode: screen;
+}
+
+/* Layer 1: Primary green curtain with vertical waves */
+.aurora-layer-1 {
+    background:
+        radial-gradient(ellipse 800px 400px at 20% 0%, rgba(50, 255, 150, 0.4) 0%, transparent 50%),
+        radial-gradient(ellipse 600px 350px at 50% 10%, rgba(100, 255, 180, 0.3) 0%, transparent 50%),
+        radial-gradient(ellipse 700px 400px at 80% 0%, rgba(80, 255, 160, 0.35) 0%, transparent 50%);
+    filter: blur(30px);
+    animation: aurora-wave-1 15s ease-in-out infinite;
+}
+
+/* Layer 2: Blue-purple accents with different timing */
+.aurora-layer-2 {
+    background:
+        radial-gradient(ellipse 600px 300px at 35% 5%, rgba(100, 180, 255, 0.25) 0%, transparent 50%),
+        radial-gradient(ellipse 500px 280px at 70% 0%, rgba(180, 120, 255, 0.2) 0%, transparent 50%);
+    filter: blur(40px);
+    animation: aurora-wave-2 18s ease-in-out infinite 2s;
+}
+
+/* Layer 3: Subtle pink/magenta highlights */
+.aurora-layer-3 {
+    background:
+        radial-gradient(ellipse 400px 250px at 15% 10%, rgba(255, 100, 200, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse 450px 280px at 85% 5%, rgba(200, 150, 255, 0.18) 0%, transparent 50%);
+    filter: blur(50px);
+    animation: aurora-wave-3 22s ease-in-out infinite 4s;
+}
+
+@keyframes aurora-fade-in {
+    0% {
+        opacity: 0;
+        transform: scaleY(0.6);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+
+/* Wave animation 1: Horizontal movement with vertical stretch */
+@keyframes aurora-wave-1 {
+
+    0%,
+    100% {
+        transform: translateX(0%) skewX(-2deg) scaleY(1);
+        opacity: 1;
+    }
+
+    25% {
+        transform: translateX(-5%) skewX(3deg) scaleY(1.1);
+        opacity: 0.9;
+    }
+
+    50% {
+        transform: translateX(3%) skewX(-1deg) scaleY(0.95);
+        opacity: 1;
+    }
+
+    75% {
+        transform: translateX(-3%) skewX(2deg) scaleY(1.05);
+        opacity: 0.95;
+    }
+}
+
+/* Wave animation 2: Counter movement for depth */
+@keyframes aurora-wave-2 {
+
+    0%,
+    100% {
+        transform: translateX(0%) skewX(1deg) scaleY(1) scaleX(1);
+        opacity: 0.8;
+    }
+
+    30% {
+        transform: translateX(4%) skewX(-2deg) scaleY(1.08) scaleX(1.02);
+        opacity: 0.9;
+    }
+
+    60% {
+        transform: translateX(-4%) skewX(2deg) scaleY(0.92) scaleX(0.98);
+        opacity: 0.85;
+    }
+
+    90% {
+        transform: translateX(2%) skewX(-1deg) scaleY(1.03) scaleX(1.01);
+        opacity: 0.8;
+    }
+}
+
+/* Wave animation 3: Slow pulse and drift */
+@keyframes aurora-wave-3 {
+
+    0%,
+    100% {
+        transform: translateX(0%) translateY(0%) skewX(0deg) scaleY(1);
+        opacity: 0.7;
+    }
+
+    33% {
+        transform: translateX(-3%) translateY(-2%) skewX(3deg) scaleY(1.1);
+        opacity: 0.85;
+    }
+
+    66% {
+        transform: translateX(4%) translateY(1%) skewX(-2deg) scaleY(0.9);
+        opacity: 0.75;
+    }
+}
+
+/* Aurora glow effect on scene */
+.scene.aurora-glow .cabin {
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.4),
+        0 -5px 30px rgba(100, 255, 180, 0.08);
+}
+
+.scene.aurora-glow .ground::before {
+    box-shadow:
+        inset 0 10px 30px rgba(100, 255, 180, 0.03),
+        inset 0 -5px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* ========================================
    Mountains / Horizon
    ======================================== */
 .mountains {
@@ -231,10 +378,10 @@ body {
    ======================================== */
 .boston-skyline {
     position: absolute;
-    bottom: 25%;
+    bottom: 23%;
     left: 0;
     width: 100%;
-    height: 180px;
+    height: 220px;
     opacity: 0;
     transition: opacity 3s ease;
     pointer-events: none;
@@ -274,9 +421,10 @@ body {
     bottom: 0;
     left: 26%;
     width: 28px;
-    height: 145px;
+    height: 160px;
     background: linear-gradient(to right, #08080f 0%, #0e0e18 50%, #0a0a14 100%);
     clip-path: polygon(0% 2%, 100% 0%, 100% 100%, 0% 100%);
+    z-index: 3;
 }
 
 .boston-skyline__hancock::before {
@@ -300,8 +448,9 @@ body {
     bottom: 0;
     left: 34%;
     width: 35px;
-    height: 125px;
+    height: 140px;
     background: linear-gradient(to right, #0a0a14 0%, #101018 50%, #0c0c16 100%);
+    z-index: 3;
 }
 
 .boston-skyline__prudential::before {
@@ -336,9 +485,10 @@ body {
     bottom: 0;
     left: 44%;
     width: 24px;
-    height: 90px;
+    height: 105px;
     background: linear-gradient(to right, #09090f 0%, #0d0d17 50%, #0b0b15 100%);
     border-radius: 6px 6px 0 0;
+    z-index: 2;
 }
 
 .boston-skyline__huntington::before {
@@ -359,8 +509,9 @@ body {
     bottom: 0;
     right: 32%;
     width: 22px;
-    height: 85px;
+    height: 100px;
     background: linear-gradient(to right, #0a0a12 0%, #0e0e18 50%, #0c0c16 100%);
+    z-index: 1;
 }
 
 /* Custom House Tower - with pointed top and clock */
@@ -369,8 +520,9 @@ body {
     bottom: 0;
     right: 25%;
     width: 20px;
-    height: 75px;
+    height: 90px;
     background: linear-gradient(to right, #0b0b13 0%, #0f0f19 50%, #0d0d17 100%);
+    z-index: 2;
 }
 
 .boston-skyline__customhouse::before {
@@ -404,8 +556,9 @@ body {
     bottom: 0;
     right: 18%;
     width: 28px;
-    height: 68px;
+    height: 83px;
     background: linear-gradient(to right, #0c0c14 0%, #101018 50%, #0e0e16 100%);
+    z-index: 1;
 }
 
 /* Citgo Sign - iconic Kenmore landmark */
@@ -414,7 +567,7 @@ body {
     bottom: 0;
     left: 8%;
     width: 40px;
-    height: 72px;
+    height: 87px;
 }
 
 /* Building the sign sits on */
@@ -893,8 +1046,8 @@ body {
    ======================================== */
 .cabin__door {
     position: absolute;
-    bottom: 0;
-    left: 50%;
+    bottom: 10%;
+    left: 55%;
     transform: translateX(-50%);
     width: 50px;
     height: 80px;
@@ -994,50 +1147,50 @@ body {
     box-shadow: none;
 }
 
-/* Position lights along wire */
+/* Position lights along wire using indexed variable */
 .light {
-    --light-offset: 0%;
-    left: var(--light-offset);
+    --light-index: 0;
+    left: calc(5% + var(--light-index) * 10%);
 }
 
 .light--1 {
-    --light-offset: 5%;
+    --light-index: 0;
 }
 
 .light--2 {
-    --light-offset: 15%;
+    --light-index: 1;
 }
 
 .light--3 {
-    --light-offset: 25%;
+    --light-index: 2;
 }
 
 .light--4 {
-    --light-offset: 35%;
+    --light-index: 3;
 }
 
 .light--5 {
-    --light-offset: 45%;
+    --light-index: 4;
 }
 
 .light--6 {
-    --light-offset: 55%;
+    --light-index: 5;
 }
 
 .light--7 {
-    --light-offset: 65%;
+    --light-index: 6;
 }
 
 .light--8 {
-    --light-offset: 75%;
+    --light-index: 7;
 }
 
 .light--9 {
-    --light-offset: 85%;
+    --light-index: 8;
 }
 
 .light--10 {
-    --light-offset: 95%;
+    --light-index: 9;
 }
 
 /* Lights ON state */
@@ -1077,57 +1230,6 @@ body {
     box-shadow: 0 0 10px var(--light-purple), 0 0 20px var(--light-purple);
 }
 
-/* Chase mode - use animation delay based on index */
-.cabin__lights.chase .light {
-    animation: chase-light 2s ease-in-out infinite;
-}
-
-.cabin__lights.chase .light--1 {
-    animation-delay: 0s;
-}
-
-.cabin__lights.chase .light--2 {
-    animation-delay: 0.15s;
-}
-
-.cabin__lights.chase .light--3 {
-    animation-delay: 0.3s;
-}
-
-.cabin__lights.chase .light--4 {
-    animation-delay: 0.45s;
-}
-
-.cabin__lights.chase .light--5 {
-    animation-delay: 0.6s;
-}
-
-.cabin__lights.chase .light--6 {
-    animation-delay: 0.75s;
-}
-
-.cabin__lights.chase .light--7 {
-    animation-delay: 0.9s;
-}
-
-.cabin__lights.chase .light--8 {
-    animation-delay: 1.05s;
-}
-
-.cabin__lights.chase .light--9 {
-    animation-delay: 1.2s;
-}
-
-.cabin__lights.chase .light--10 {
-    animation-delay: 1.35s;
-}
-
-/* Warm white mode */
-.cabin__lights.warm .light {
-    background: #ffddaa !important;
-    box-shadow: 0 0 8px #ffcc88, 0 0 15px #ffaa66 !important;
-}
-
 @keyframes glow-pulse {
 
     0%,
@@ -1142,28 +1244,13 @@ body {
     }
 }
 
-@keyframes chase-light {
-
-    0%,
-    20%,
-    100% {
-        opacity: 0.3;
-        transform: scale(0.9);
-    }
-
-    10% {
-        opacity: 1;
-        transform: scale(1.1);
-    }
-}
-
 /* ========================================
    Space Tree / Antenna
    ======================================== */
 .tree {
     position: absolute;
     bottom: 18%;
-    right: 12%;
+    right: 15%;
     width: 140px;
     height: 200px;
     cursor: pointer;
@@ -1330,47 +1417,118 @@ body {
 
 .ornament {
     position: absolute;
-    font-size: 16px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--ornament-color, #FF3366);
     opacity: 0;
     transform: scale(0);
     transition: all 0.3s ease;
-    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.3),
+        inset -2px -2px 4px rgba(0, 0, 0, 0.2),
+        inset 2px 2px 4px rgba(255, 255, 255, 0.4);
+    transform-origin: top center;
 }
 
 .ornament.visible {
     opacity: 1;
     transform: scale(1);
+    animation: gentle-swing 3s ease-in-out infinite;
+}
+
+/* Vary animation timing for each ornament */
+.ornament--1.visible {
+    animation-delay: 0s;
+    animation-duration: 3.2s;
+}
+
+.ornament--2.visible {
+    animation-delay: 0.5s;
+    animation-duration: 2.8s;
+}
+
+.ornament--3.visible {
+    animation-delay: 1s;
+    animation-duration: 3.5s;
+}
+
+.ornament--4.visible {
+    animation-delay: 0.3s;
+    animation-duration: 3s;
+}
+
+.ornament--5.visible {
+    animation-delay: 0.8s;
+    animation-duration: 2.9s;
+}
+
+.ornament--6.visible {
+    animation-delay: 0.2s;
+    animation-duration: 3.3s;
+}
+
+.ornament--7.visible {
+    animation-delay: 0.6s;
+    animation-duration: 3.1s;
+}
+
+.ornament--8.visible {
+    animation-delay: 0.4s;
+    animation-duration: 3.4s;
+}
+
+@keyframes gentle-swing {
+
+    0%,
+    100% {
+        transform: scale(1) rotate(-2deg);
+    }
+
+    50% {
+        transform: scale(1) rotate(2deg);
+    }
 }
 
 /* Ornament positioning */
 .ornament--1 {
-    top: 25px;
-    left: 38%;
+    top: 22px;
+    left: 50%;
 }
 
 .ornament--2 {
     top: 35px;
-    left: 55%;
+    left: 33%;
 }
 
 .ornament--3 {
-    top: 45px;
-    left: 25%;
+    top: 42px;
+    left: 62%;
 }
 
 .ornament--4 {
-    top: 60px;
-    left: 60%;
+    top: 58px;
+    left: 26%;
 }
 
 .ornament--5 {
-    top: 70px;
-    left: 35%;
+    top: 65px;
+    left: 56%;
 }
 
 .ornament--6 {
-    top: 55px;
-    left: 45%;
+    top: 0px;
+    left: 42%;
+}
+
+.ornament--7 {
+    top: 88px;
+    left: 33%;
+}
+
+.ornament--8 {
+    top: 90px;
+    left: 68%;
 }
 
 /* ========================================
@@ -1407,7 +1565,7 @@ body {
 
 .object--snowman {
     bottom: 21%;
-    left: 8%;
+    left: 12%;
     font-size: 40px;
     transition: all 0.5s ease;
     overflow: visible;
@@ -1442,7 +1600,7 @@ body {
 .gifts-container {
     position: absolute;
     bottom: 16%;
-    right: 8%;
+    right: 12%;
     width: 160px;
     height: 80px;
 }
@@ -1452,37 +1610,65 @@ body {
     transition: opacity 0.8s ease, transform 0.3s ease;
     bottom: auto;
     left: auto;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.gifts-container .object--gift:hover {
+    transform: scale(1.2) rotate(-8deg);
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5)) drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
 }
 
 .gifts-container #gift-1 {
-    bottom: 8px;
-    left: 15px;
-    font-size: 24px;
+    bottom: 5px;
+    left: 0px;
+    font-size: 18px;
+    --float-distance: -4px;
+    animation: gift-float 3s ease-in-out infinite;
 }
 
 .gifts-container #gift-2 {
-    bottom: 20px;
-    right: 20px;
-    font-size: 28px;
+    bottom: 8px;
+    left: 62px;
+    font-size: 20px;
+    --float-distance: -6px;
+    animation: gift-float 3.5s ease-in-out infinite;
 }
 
 .gifts-container #gift-3 {
-    bottom: 35px;
-    left: 45px;
-    font-size: 22px;
+    bottom: 32px;
+    left: 18px;
+    font-size: 16px;
+    --float-distance: -3px;
+    animation: gift-float 3.2s ease-in-out infinite;
 }
 
 .gifts-container #gift-4 {
-    bottom: 12px;
-    right: 50px;
-    font-size: 26px;
+    bottom: 32px;
+    left: 50px;
+    font-size: 18px;
+    --float-distance: -5px;
+    animation: gift-float 3.8s ease-in-out infinite;
 }
 
 .gifts-container #gift-5 {
-    bottom: 25px;
-    left: 85px;
-    font-size: 20px;
+    bottom: 2px;
+    left: 30px;
+    font-size: 16px;
+    --float-distance: -4px;
+    animation: gift-float 3.3s ease-in-out infinite;
+}
+
+/* Subtle floating animation for gifts - uses CSS variable for distance */
+@keyframes gift-float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(var(--float-distance, -4px));
+    }
 }
 
 /* Gift reveal animations */
@@ -1506,72 +1692,45 @@ body {
     }
 }
 
-/* Different gift opening reveals - all share similar animation patterns */
+/* Consolidated gift opening reveal animation - uses CSS variables for customization */
+@keyframes gift-reveal {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(var(--reveal-scale, 1.3)) rotate(var(--reveal-rotate, 0deg));
+    }
+
+    100% {
+        transform: scale(1.1);
+        filter: brightness(var(--reveal-brightness, 1));
+    }
+}
+
+/* Different gift opening reveals - use shared animation with custom properties */
 .gift-opened-heart,
 .gift-opened-star,
 .gift-opened-sparkle {
-    animation-duration: 0.6s;
-    animation-timing-function: ease;
-    animation-fill-mode: forwards;
+    animation: gift-reveal 0.6s ease forwards;
 }
 
 .gift-opened-heart {
-    animation-name: heart-reveal;
+    --reveal-scale: 1.4;
+    --reveal-rotate: 10deg;
 }
 
 .gift-opened-star {
-    animation-name: star-reveal;
+    --reveal-scale: 1.3;
+    --reveal-rotate: -10deg;
+    --reveal-brightness: 1.3;
 }
 
 .gift-opened-sparkle {
-    animation-name: sparkle-reveal;
-}
-
-@keyframes heart-reveal {
-    0% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.4) rotate(10deg);
-    }
-
-    100% {
-        transform: scale(1.1);
-    }
-}
-
-@keyframes star-reveal {
-    0% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.3) rotate(-10deg);
-    }
-
-    100% {
-        transform: scale(1.1);
-        filter: brightness(1.3);
-    }
-}
-
-@keyframes sparkle-reveal {
-    0% {
-        transform: scale(1);
-    }
-
-    25% {
-        transform: scale(1.2) rotate(5deg);
-    }
-
-    75% {
-        transform: scale(1.3) rotate(-5deg);
-    }
-
-    100% {
-        transform: scale(1.1);
-    }
+    --reveal-scale: 1.3;
+    --reveal-rotate: -5deg;
+    /* Note: Original had multi-stage rotation (5deg -> -5deg) but simplified
+       to single rotation for consistency. Visual difference is negligible. */
 }
 
 .object.opened {
@@ -1877,46 +2036,13 @@ body {
    ======================================== */
 @media (max-width: 768px) {
     .cabin {
-        width: 250px;
-        height: 180px;
-        bottom: 24%;
-    }
-
-    .cabin__body {
-        width: 220px;
-        height: 110px;
-    }
-
-    .cabin__roof {
-        width: 250px;
-    }
-
-    .cabin__roof::before {
-        border-left-width: 125px;
-        border-right-width: 125px;
-        border-bottom-width: 70px;
-    }
-
-    .cabin__chimney {
-        left: 30px;
-        width: 20px;
-    }
-
-    .cabin__door {
-        width: 40px;
-        height: 60px;
-        left: 15px;
-    }
-
-    .cabin__window--side {
-        width: 35px;
-        height: 40px;
+        transform: translateX(-50%) scale(0.78);
+        transform-origin: bottom center;
     }
 
     .tree {
-        right: 8%;
-        width: 60px;
-        height: 100px;
+        transform: scale(0.65);
+        transform-origin: bottom center;
     }
 
     .object {
@@ -1925,6 +2051,15 @@ body {
 
     .object--snowman {
         font-size: 32px;
+        transform: scale(0.8);
+        transform-origin: bottom center;
+    }
+
+    .snowman-image {
+        width: 95px;
+        max-height: 95px;
+        top: -88px;
+        left: -24px;
     }
 
     /* Controls adjustment for tablets */
@@ -1959,75 +2094,20 @@ body {
     /* Boston skyline adjustments */
     .boston-skyline {
         transform: scale(0.8);
+        transform-origin: bottom center;
+    }
+
+    .gifts-container {
+        transform: scale(0.8);
+        transform-origin: bottom right;
     }
 }
 
 @media (max-width: 480px) {
     .cabin {
-        width: 200px;
-        height: 150px;
-        bottom: 26%;
-    }
-
-    .cabin__body {
-        width: 180px;
-        height: 90px;
-        left: 10px;
-    }
-
-    .cabin__roof {
-        width: 200px;
-    }
-
-    .cabin__roof::before {
-        border-left-width: 100px;
-        border-right-width: 100px;
-        border-bottom-width: 60px;
-    }
-
-    .cabin__chimney {
-        left: 20px;
-        width: 16px;
-        height: 30px;
-    }
-
-    .cabin__chimney::before {
-        border-width: 3px;
-    }
-
-    .cabin__window--main {
-        width: 60px;
-        height: 50px;
-        left: 20px;
-    }
-
-    .cabin__window--side {
-        width: 30px;
-        height: 35px;
-        top: 20px;
-    }
-
-    .cabin__door {
-        width: 35px;
-        height: 55px;
-        left: 10px;
-        bottom: 0;
-    }
-
-    .cabin__wreath {
-        width: 15px;
-        height: 15px;
-        top: 8px;
-    }
-
-    .cabin__lights {
-        width: 180px;
-        top: -8px;
-    }
-
-    .light {
-        width: 6px;
-        height: 8px;
+        transform: translateX(-50%) scale(0.625);
+        transform-origin: bottom center;
+        bottom: 24%;
     }
 
     /* Controls on mobile */
@@ -2077,6 +2157,12 @@ body {
         display: none;
     }
 
+    .gifts-container {
+        transform: scale(0.65);
+        transform-origin: bottom right;
+        bottom: 18%;
+    }
+
     /* Mountains on mobile */
     .mountains {
         height: 120px;
@@ -2092,16 +2178,15 @@ body {
 
     /* Tree on mobile */
     .tree {
-        right: 5%;
-        width: 50px;
-        height: 80px;
-        bottom: 22%;
+        transform: scale(0.5);
+        transform-origin: bottom center;
+        bottom: 24%;
     }
 
     /* Boston skyline smaller on mobile */
     .boston-skyline {
-        transform: scale(0.6);
-        bottom: 20%;
+        transform: scale(0.5);
+        transform-origin: bottom center;
     }
 
     /* Snowflakes smaller on mobile */
@@ -2116,51 +2201,24 @@ body {
 
     .object--snowman {
         font-size: 28px;
+        transform: scale(0.7);
+        transform-origin: bottom center;
+    }
+
+    .snowman-image {
+        width: 75px;
+        max-height: 75px;
+        top: -70px;
+        left: -18px;
     }
 }
 
 /* Extra small phones */
 @media (max-width: 360px) {
     .cabin {
-        width: 170px;
-        height: 130px;
-        bottom: 28%;
-    }
-
-    .cabin__body {
-        width: 150px;
-        height: 75px;
-        left: 10px;
-    }
-
-    .cabin__roof {
-        width: 170px;
-    }
-
-    .cabin__roof::before {
-        border-left-width: 85px;
-        border-right-width: 85px;
-        border-bottom-width: 50px;
-    }
-
-    .cabin__window--main {
-        width: 50px;
-        height: 42px;
-        left: 18px;
-    }
-
-    .cabin__door {
-        width: 30px;
-        height: 48px;
-    }
-
-    .cabin__lights {
-        width: 150px;
-    }
-
-    .light {
-        width: 5px;
-        height: 7px;
+        transform: translateX(-50%) scale(0.53);
+        transform-origin: bottom center;
+        bottom: 26%;
     }
 
     #secret-reveal {
@@ -2176,7 +2234,34 @@ body {
     }
 
     .tree {
-        width: 40px;
-        height: 65px;
+        transform: scale(0.4);
+        transform-origin: bottom center;
+    }
+
+    .object--snowman {
+        transform: scale(0.6);
+        transform-origin: bottom center;
+    }
+
+    .snowman-image {
+        width: 60px;
+        max-height: 60px;
+        top: -56px;
+        left: -14px;
+    }
+
+    .object--snowman {
+        transform: scale(0.6);
+        transform-origin: bottom center;
+    }
+
+    .boston-skyline {
+        transform: scale(0.4);
+        transform-origin: bottom center;
+    }
+
+    .gifts-container {
+        transform: scale(0.55);
+        transform-origin: bottom right;
     }
 }

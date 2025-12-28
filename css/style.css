@@ -1046,7 +1046,7 @@ body {
    ======================================== */
 .cabin__door {
     position: absolute;
-    bottom: 0;
+    bottom: 10%;
     left: 55%;
     transform: translateX(-50%);
     width: 50px;
@@ -1153,16 +1153,45 @@ body {
     left: calc(5% + var(--light-index) * 10%);
 }
 
-.light--1 { --light-index: 0; }
-.light--2 { --light-index: 1; }
-.light--3 { --light-index: 2; }
-.light--4 { --light-index: 3; }
-.light--5 { --light-index: 4; }
-.light--6 { --light-index: 5; }
-.light--7 { --light-index: 6; }
-.light--8 { --light-index: 7; }
-.light--9 { --light-index: 8; }
-.light--10 { --light-index: 9; }
+.light--1 {
+    --light-index: 0;
+}
+
+.light--2 {
+    --light-index: 1;
+}
+
+.light--3 {
+    --light-index: 2;
+}
+
+.light--4 {
+    --light-index: 3;
+}
+
+.light--5 {
+    --light-index: 4;
+}
+
+.light--6 {
+    --light-index: 5;
+}
+
+.light--7 {
+    --light-index: 6;
+}
+
+.light--8 {
+    --light-index: 7;
+}
+
+.light--9 {
+    --light-index: 8;
+}
+
+.light--10 {
+    --light-index: 9;
+}
 
 /* Lights ON state */
 .cabin__lights.on .light {
@@ -1201,18 +1230,6 @@ body {
     box-shadow: 0 0 10px var(--light-purple), 0 0 20px var(--light-purple);
 }
 
-/* Chase mode - use animation delay based on index with calc */
-.cabin__lights.chase .light {
-    animation: chase-light 2s ease-in-out infinite;
-    animation-delay: calc(var(--light-index) * 0.15s);
-}
-
-/* Warm white mode */
-.cabin__lights.warm .light {
-    background: #ffddaa !important;
-    box-shadow: 0 0 8px #ffcc88, 0 0 15px #ffaa66 !important;
-}
-
 @keyframes glow-pulse {
 
     0%,
@@ -1224,21 +1241,6 @@ body {
     50% {
         opacity: 0.7;
         transform: scale(0.95);
-    }
-}
-
-@keyframes chase-light {
-
-    0%,
-    20%,
-    100% {
-        opacity: 0.3;
-        transform: scale(0.9);
-    }
-
-    10% {
-        opacity: 1;
-        transform: scale(1.1);
     }
 }
 
@@ -1415,47 +1417,118 @@ body {
 
 .ornament {
     position: absolute;
-    font-size: 16px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--ornament-color, #FF3366);
     opacity: 0;
     transform: scale(0);
     transition: all 0.3s ease;
-    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.3),
+        inset -2px -2px 4px rgba(0, 0, 0, 0.2),
+        inset 2px 2px 4px rgba(255, 255, 255, 0.4);
+    transform-origin: top center;
 }
 
 .ornament.visible {
     opacity: 1;
     transform: scale(1);
+    animation: gentle-swing 3s ease-in-out infinite;
+}
+
+/* Vary animation timing for each ornament */
+.ornament--1.visible {
+    animation-delay: 0s;
+    animation-duration: 3.2s;
+}
+
+.ornament--2.visible {
+    animation-delay: 0.5s;
+    animation-duration: 2.8s;
+}
+
+.ornament--3.visible {
+    animation-delay: 1s;
+    animation-duration: 3.5s;
+}
+
+.ornament--4.visible {
+    animation-delay: 0.3s;
+    animation-duration: 3s;
+}
+
+.ornament--5.visible {
+    animation-delay: 0.8s;
+    animation-duration: 2.9s;
+}
+
+.ornament--6.visible {
+    animation-delay: 0.2s;
+    animation-duration: 3.3s;
+}
+
+.ornament--7.visible {
+    animation-delay: 0.6s;
+    animation-duration: 3.1s;
+}
+
+.ornament--8.visible {
+    animation-delay: 0.4s;
+    animation-duration: 3.4s;
+}
+
+@keyframes gentle-swing {
+
+    0%,
+    100% {
+        transform: scale(1) rotate(-2deg);
+    }
+
+    50% {
+        transform: scale(1) rotate(2deg);
+    }
 }
 
 /* Ornament positioning */
 .ornament--1 {
-    top: 25px;
-    left: 38%;
+    top: 22px;
+    left: 50%;
 }
 
 .ornament--2 {
     top: 35px;
-    left: 55%;
+    left: 33%;
 }
 
 .ornament--3 {
-    top: 45px;
-    left: 25%;
+    top: 42px;
+    left: 62%;
 }
 
 .ornament--4 {
-    top: 60px;
-    left: 60%;
+    top: 58px;
+    left: 26%;
 }
 
 .ornament--5 {
-    top: 70px;
-    left: 35%;
+    top: 65px;
+    left: 56%;
 }
 
 .ornament--6 {
-    top: 55px;
-    left: 45%;
+    top: 0px;
+    left: 42%;
+}
+
+.ornament--7 {
+    top: 88px;
+    left: 33%;
+}
+
+.ornament--8 {
+    top: 90px;
+    left: 68%;
 }
 
 /* ========================================
@@ -1587,6 +1660,7 @@ body {
 
 /* Subtle floating animation for gifts - uses CSS variable for distance */
 @keyframes gift-float {
+
     0%,
     100% {
         transform: translateY(0px);

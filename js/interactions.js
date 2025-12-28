@@ -37,7 +37,7 @@
     const defaultState = {
         windowLit: false,
         sideWindowLit: false,
-        lightsMode: 'off', // off, on, chase, warm
+        lightsOn: false,
         treeDecorations: 0,
         giftsOpened: [],
         giftsRevealed: 0, // New: track how many gifts have appeared
@@ -227,18 +227,13 @@
     // ========================================
     // String Lights Interactions
     // ========================================
-    const lightModes = ['off', 'on', 'chase', 'warm'];
+    function toggleLights() {
+        state.lightsOn = !state.lightsOn;
 
-    function cycleLights() {
-        const currentIndex = lightModes.indexOf(state.lightsMode);
-        state.lightsMode = lightModes[(currentIndex + 1) % lightModes.length];
-
-        // Remove all mode classes
-        elements.stringLights.classList.remove('on', 'chase', 'warm');
-
-        // Add new mode class
-        if (state.lightsMode !== 'off') {
-            elements.stringLights.classList.add(state.lightsMode);
+        if (state.lightsOn) {
+            elements.stringLights.classList.add('on');
+        } else {
+            elements.stringLights.classList.remove('on');
         }
 
         if (!state.lightsToggled) {
@@ -252,10 +247,10 @@
     // ========================================
     // Tree Decoration
     // ========================================
-    const ornamentEmojis = ['🔴', '🟡', '🔵', '🟢', '🟣', '⚪'];
+    const ornamentColors = ['#FF3366', '#FFD700', '#3399FF', '#4CAF50', '#9C27B0', '#FF6B35', '#00BCD4', '#FF9800'];
 
     function decorateTree() {
-        if (state.treeDecorations < 6) {
+        if (state.treeDecorations < 8) {
             state.treeDecorations++;
             addOrnament(state.treeDecorations);
 
@@ -264,7 +259,7 @@
             }
 
             // Light up star when fully decorated
-            if (state.treeDecorations >= 6) {
+            if (state.treeDecorations >= 8) {
                 elements.tree.classList.add('decorated');
                 if (!state.treeFullyDecorated) {
                     state.treeFullyDecorated = true;
@@ -284,7 +279,7 @@
     function addOrnament(index) {
         const ornament = document.createElement('span');
         ornament.className = `ornament ornament--${index}`;
-        ornament.textContent = ornamentEmojis[index - 1];
+        ornament.style.setProperty('--ornament-color', ornamentColors[index - 1]);
         elements.treeOrnaments.appendChild(ornament);
 
         // Animate in
@@ -295,7 +290,7 @@
         for (let i = 1; i <= state.treeDecorations; i++) {
             addOrnament(i);
         }
-        if (state.treeDecorations >= 6) {
+        if (state.treeDecorations >= 8) {
             elements.tree.classList.add('decorated');
         }
     }
@@ -308,7 +303,7 @@
         { emoji: '⭐', className: 'star', message: 'You\'re my star!', special: 'constellation' },
         { emoji: '📮', className: 'postcards', message: 'Postcards from our adventures...', special: 'postcards' },
         { emoji: '🌟', className: 'star', message: 'A quiet moment under the stars.', special: 'northernLights' },
-        { emoji: '💎', className: 'sparkle', message: 'You\'re precious to me!' }
+        { emoji: '�', className: 'sparkle', message: 'Your year in books awaits...', special: 'bookWrapped' }
     ];
 
     // Capricorn constellation data (based on actual star coordinates)
@@ -374,6 +369,10 @@
                 setTimeout(() => {
                     triggerNorthernLights();
                 }, 800);
+            } else if (reveal.special === 'bookWrapped') {
+                setTimeout(() => {
+                    openBookWrapped();
+                }, 800);
             }
 
             incrementDiscoveries();
@@ -394,6 +393,8 @@
                 loadPostcards();
             } else if (reveal.special === 'northernLights' && state.northernLightsActive) {
                 pulseNorthernLights();
+            } else if (reveal.special === 'bookWrapped') {
+                openBookWrapped();
             }
 
             gift.style.animation = 'none';
@@ -959,6 +960,17 @@
     }
 
     // ========================================
+    // Book Wrapped - Final Gift
+    // ========================================
+    function openBookWrapped() {
+        // Open in new window/tab
+        window.open('book-wrapped.html', '_blank');
+
+        // Alternative: Open in same window
+        // window.location.href = 'book-wrapped.html';
+    }
+
+    // ========================================
     // Snowman Interaction
     // ========================================
     function createSnowmanImage() {
@@ -1070,8 +1082,8 @@
         updateSmoke();
 
         // Lights
-        if (state.lightsMode !== 'off') {
-            elements.stringLights.classList.add(state.lightsMode);
+        if (state.lightsOn) {
+            elements.stringLights.classList.add('on');
         }
 
         // Tree
@@ -1122,7 +1134,7 @@
         addClickAndKeyListeners(elements.door, knockDoor);
 
         // String lights
-        addClickAndKeyListeners(elements.stringLights, cycleLights);
+        addClickAndKeyListeners(elements.stringLights, toggleLights);
 
         // Tree
         addClickAndKeyListeners(elements.tree, decorateTree);
@@ -1136,30 +1148,43 @@
         // Snowman
         elements.snowman?.addEventListener('click', waveToSnowman);
 
-        // Secret spot (htmx fallback)
-        elements.secretSpot?.addEventListener('click', (e) => {
-            // Check if htmx will handle it
-            if (typeof htmx === 'undefined') {
-                e.preventDefault();
-                showSecretFallback();
-            } else {
-                // htmx handles it, but track discovery
-                if (!state.secretFound) {
-                    state.secretFound = true;
-                    incrementDiscoveries();
-                    saveState();
-                }
-            }
-        });
+        // Secret spot - handle both htmx and fallback
+        elements.secretSpot?.addEventListener('click', handleSecretClick);
+
+        // Also add keyboard support for secret spot
+        addClickAndKeyListeners(elements.secretSpot, handleSecretClick);
 
         // Controls
         elements.snowToggle?.addEventListener('click', cycleSnowIntensity);
         elements.resetBtn?.addEventListener('click', resetScene);
 
-        // Close secret on escape
+        // Close secret on escape or clicking overlay
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeSecret();
         });
+
+        // Close secret when clicking the overlay
+        elements.secretReveal?.addEventListener('click', (e) => {
+            if (e.target === elements.secretReveal) {
+                closeSecret();
+            }
+        });
+    }
+
+    function handleSecretClick(e) {
+        // Track discovery regardless of htmx
+        if (!state.secretFound) {
+            state.secretFound = true;
+            incrementDiscoveries();
+            saveState();
+        }
+
+        // If htmx is not available, show fallback
+        if (typeof htmx === 'undefined') {
+            e.preventDefault();
+            showSecretFallback();
+        }
+        // Otherwise htmx will handle the content loading
     }
 
     // ========================================

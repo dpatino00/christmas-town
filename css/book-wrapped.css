@@ -728,14 +728,13 @@ body {
 
     .slide-content {
         padding: 60px 10px 40px;
-        min-height: 0;
+        min-height: 100vh;
         height: auto;
-        overflow-y: visible;
+        overflow-y: auto;
     }
 
     .genre-cards {
-        max-height: none;
-        overflow-y: visible;
+        max-height: 60vh;
     }
 
     .genre-card {
@@ -745,47 +744,7 @@ body {
         font-size: 0.95rem;
         gap: 0.5rem;
     }
-}
 
-@media (max-width: 480px) {
-    .slides-container {
-        min-height: 100vh;
-        height: auto;
-        overflow-y: visible;
-        -webkit-overflow-scrolling: touch;
-        position: relative;
-    }
-
-    .slide {
-        position: static !important;
-        min-height: 100vh !important;
-        display: block !important;
-        opacity: 1 !important;
-        pointer-events: auto !important;
-        transition: none !important;
-        animation: none !important;
-    }
-
-    .slide-content {
-        padding: 50px 4px 20px;
-        min-height: 0;
-        height: auto;
-        overflow-y: visible;
-    }
-
-    .genre-cards {
-        max-height: none;
-        overflow-y: visible;
-    }
-
-    .genre-card {
-        padding: 0.5rem 0.2rem;
-        font-size: 0.9rem;
-        gap: 0.3rem;
-    }
-}
-
-@media (max-width: 768px) {
     .headline {
         font-size: 1.8rem;
         margin-bottom: 1.5rem;
@@ -819,28 +778,45 @@ body {
     .relatable-metric .emoji {
         font-size: 1.5rem;
     }
+}
+
+@media (max-width: 480px) {
+    .slides-container {
+        min-height: 100vh;
+        height: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
+        position: relative;
+    }
+
+    .slide {
+        position: static !important;
+        min-height: 100vh !important;
+        display: block !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        transition: none !important;
+        animation: none !important;
+    }
 
     .slide-content {
-        padding: 60px 10px 40px;
+        padding: 50px 4px 20px;
         min-height: 100vh;
         height: auto;
         overflow-y: auto;
     }
 
     .genre-cards {
-        max-height: 60vh;
+        max-height: none;
+        overflow-y: visible;
     }
 
     .genre-card {
-        flex-direction: column;
-        text-align: center;
-        padding: 0.7rem 0.5rem;
-        font-size: 0.95rem;
-        gap: 0.5rem;
+        padding: 0.5rem 0.2rem;
+        font-size: 0.9rem;
+        gap: 0.3rem;
     }
-}
 
-@media (max-width: 480px) {
     .headline {
         font-size: 1.5rem;
         margin-bottom: 1.2rem;
@@ -907,13 +883,6 @@ body {
 
     .series-title {
         font-size: 1.2rem;
-    }
-
-    .slide-content {
-        padding: 50px 4px 20px;
-        min-height: 100vh;
-        height: auto;
-        overflow-y: auto;
     }
 }
 

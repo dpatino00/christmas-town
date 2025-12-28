@@ -1194,16 +1194,9 @@
         elements.snowToggle?.addEventListener('click', cycleSnowIntensity);
         elements.resetBtn?.addEventListener('click', resetScene);
 
-        // Close secret on escape or clicking overlay
+        // Close secret on escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeSecret();
-        });
-
-        // Close secret when clicking the overlay
-        elements.secretReveal?.addEventListener('click', (e) => {
-            if (e.target === elements.secretReveal) {
-                closeSecret();
-            }
         });
     }
 

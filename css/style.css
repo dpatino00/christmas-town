@@ -1245,12 +1245,25 @@ body {
 }
 
 /* ========================================
+   Tree Area Container (Groups tree + gifts for unified scaling)
+   ======================================== */
+.tree-area {
+    position: absolute;
+    bottom: 16%;
+    right: 12%;
+    width: 180px;
+    height: 220px;
+    transform-origin: bottom right;
+    transition: transform 0.3s ease;
+}
+
+/* ========================================
    Space Tree / Antenna
    ======================================== */
 .tree {
     position: absolute;
-    bottom: 18%;
-    right: 15%;
+    bottom: 0;
+    right: 20px;
     width: 140px;
     height: 200px;
     cursor: pointer;
@@ -1599,8 +1612,8 @@ body {
    ======================================== */
 .gifts-container {
     position: absolute;
-    bottom: 16%;
-    right: 12%;
+    bottom: -6%;
+    right: -14%;
     width: 160px;
     height: 80px;
 }
@@ -1951,7 +1964,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1);
     text-align: center;
     max-width: 400px;
-    pointer-events: auto;
+    pointer-events: none;
     animation: reveal-in 0.5s ease;
 }
 
@@ -1994,6 +2007,77 @@ body {
 
 #secret-reveal button:hover {
     transform: scale(1.05);
+}
+
+/* Secret Message Fragment Styles */
+.secret-message__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 150;
+    pointer-events: auto;
+    animation: fade-in 0.3s ease;
+}
+
+.secret-message__content {
+    background: rgba(20, 15, 30, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 500px;
+    text-align: center;
+    animation: reveal-in 0.5s ease;
+}
+
+.secret-message__emoji {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 20px;
+}
+
+.secret-message__title {
+    color: var(--warm-glow);
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.secret-message__text {
+    line-height: 1.8;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.secret-message__close {
+    margin-top: 20px;
+    padding: 10px 25px;
+    background: var(--warm-glow);
+    border: none;
+    border-radius: 25px;
+    color: #1a1510;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.secret-message__close:hover {
+    transform: scale(1.05);
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 /* ========================================
@@ -2040,9 +2124,8 @@ body {
         transform-origin: bottom center;
     }
 
-    .tree {
-        transform: scale(0.65);
-        transform-origin: bottom center;
+    .tree-area {
+        transform: scale(0.75);
     }
 
     .object {
@@ -2095,11 +2178,6 @@ body {
     .boston-skyline {
         transform: scale(0.8);
         transform-origin: bottom center;
-    }
-
-    .gifts-container {
-        transform: scale(0.8);
-        transform-origin: bottom right;
     }
 }
 
@@ -2157,12 +2235,6 @@ body {
         display: none;
     }
 
-    .gifts-container {
-        transform: scale(0.65);
-        transform-origin: bottom right;
-        bottom: 18%;
-    }
-
     /* Mountains on mobile */
     .mountains {
         height: 120px;
@@ -2176,11 +2248,10 @@ body {
         right: 10%;
     }
 
-    /* Tree on mobile */
-    .tree {
-        transform: scale(0.5);
-        transform-origin: bottom center;
-        bottom: 24%;
+    /* Tree area unified scaling on mobile */
+    .tree-area {
+        transform: scale(0.6);
+        bottom: 20%;
     }
 
     /* Boston skyline smaller on mobile */
@@ -2233,9 +2304,8 @@ body {
         font-size: 0.85em;
     }
 
-    .tree {
-        transform: scale(0.4);
-        transform-origin: bottom center;
+    .tree-area {
+        transform: scale(0.5);
     }
 
     .object--snowman {
@@ -2258,10 +2328,5 @@ body {
     .boston-skyline {
         transform: scale(0.4);
         transform-origin: bottom center;
-    }
-
-    .gifts-container {
-        transform: scale(0.55);
-        transform-origin: bottom right;
     }
 }

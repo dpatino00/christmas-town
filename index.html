@@ -110,42 +110,45 @@
             <!-- Snow Ground -->
             <div class="ground"></div>
 
-            <!-- Space Tree/Antenna (Clickable) -->
-            <div class="tree" id="space-tree" role="button" tabindex="0" aria-label="Decorate the tree">
-                <div class="tree__trunk"></div>
-                <div class="tree__branches">
-                    <div class="tree__branch tree__branch--1"></div>
-                    <div class="tree__branch tree__branch--2"></div>
-                    <div class="tree__branch tree__branch--3"></div>
-                    <div class="tree__branch tree__branch--4"></div>
+            <!-- Tree Area Container (tree + gifts grouped for unified scaling) -->
+            <div class="tree-area">
+                <!-- Space Tree/Antenna (Clickable) -->
+                <div class="tree" id="space-tree" role="button" tabindex="0" aria-label="Decorate the tree">
+                    <div class="tree__trunk"></div>
+                    <div class="tree__branches">
+                        <div class="tree__branch tree__branch--1"></div>
+                        <div class="tree__branch tree__branch--2"></div>
+                        <div class="tree__branch tree__branch--3"></div>
+                        <div class="tree__branch tree__branch--4"></div>
+                    </div>
+                    <div class="tree__star" id="tree-star"></div>
+                    <div class="tree__ornaments" id="tree-ornaments">
+                        <!-- Ornaments added via interaction -->
+                    </div>
                 </div>
-                <div class="tree__star" id="tree-star"></div>
-                <div class="tree__ornaments" id="tree-ornaments">
-                    <!-- Ornaments added via interaction -->
-                </div>
-            </div>
 
-            <!-- Gifts under the tree (appear progressively) -->
-            <div class="gifts-container" id="gifts-container">
-                <div class="object object--gift" id="gift-1" role="button" tabindex="0" aria-label="Open gift"
-                    style="opacity: 0;">
-                    🎁
-                </div>
-                <div class="object object--gift" id="gift-2" role="button" tabindex="0" aria-label="Open gift"
-                    style="opacity: 0;">
-                    🎁
-                </div>
-                <div class="object object--gift" id="gift-3" role="button" tabindex="0" aria-label="Open gift"
-                    style="opacity: 0;">
-                    🎁
-                </div>
-                <div class="object object--gift" id="gift-4" role="button" tabindex="0" aria-label="Open gift"
-                    style="opacity: 0;">
-                    🎁
-                </div>
-                <div class="object object--gift" id="gift-5" role="button" tabindex="0" aria-label="Open gift"
-                    style="opacity: 0;">
-                    🎁
+                <!-- Gifts under the tree (appear progressively) -->
+                <div class="gifts-container" id="gifts-container">
+                    <div class="object object--gift" id="gift-1" role="button" tabindex="0" aria-label="Open gift"
+                        style="opacity: 0;">
+                        🎁
+                    </div>
+                    <div class="object object--gift" id="gift-2" role="button" tabindex="0" aria-label="Open gift"
+                        style="opacity: 0;">
+                        🎁
+                    </div>
+                    <div class="object object--gift" id="gift-3" role="button" tabindex="0" aria-label="Open gift"
+                        style="opacity: 0;">
+                        🎁
+                    </div>
+                    <div class="object object--gift" id="gift-4" role="button" tabindex="0" aria-label="Open gift"
+                        style="opacity: 0;">
+                        🎁
+                    </div>
+                    <div class="object object--gift" id="gift-5" role="button" tabindex="0" aria-label="Open gift"
+                        style="opacity: 0;">
+                        🎁
+                    </div>
                 </div>
             </div>
 

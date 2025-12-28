@@ -268,16 +268,52 @@
     // Initialization
     // ======================================== 
     function init() {
-        console.log('📚 Book Wrapped initialized');
-
         // Show current slide
         showSlide(state.currentSlide);
 
         // Set up event listeners
         initEventListeners();
 
+        // Set up intersection observer for mobile scroll animations
+        initScrollAnimations();
+
         // Add subtle floating animation to certain elements
         addAmbientAnimations();
+    }
+
+    // ======================================== 
+    // Scroll-Based Animations for Mobile
+    // ======================================== 
+    function initScrollAnimations() {
+        // Only run on mobile (where slides are stacked)
+        if (window.innerWidth > 768) return;
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.3 // Trigger when 30% of slide is visible
+        };
+
+        const slideObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const slide = entry.target;
+                    const slideIndex = parseInt(slide.getAttribute('data-slide'));
+
+                    // Only animate if not already animated
+                    if (!slide.hasAttribute('data-animated')) {
+                        slide.setAttribute('data-animated', 'true');
+                        animateCurrentSlide(slideIndex);
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Observe all slides
+        const slides = document.querySelectorAll('.slide');
+        slides.forEach(slide => {
+            slideObserver.observe(slide);
+        });
     }
 
     function addAmbientAnimations() {

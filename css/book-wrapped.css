@@ -708,10 +708,17 @@ body {
    Responsive Design
 ======================================== */
 @media (max-width: 768px) {
+
+    /* Hide progress dots on mobile - not needed for scrolling */
+    .progress-dots {
+        display: none;
+    }
+
     .slides-container {
         min-height: 100vh;
         height: auto;
         overflow-y: visible;
+        overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
         position: relative;
     }
@@ -727,10 +734,12 @@ body {
     }
 
     .slide-content {
-        padding: 60px 10px 40px;
+        padding: 60px 20px 40px;
         min-height: 100vh;
         height: auto;
         overflow-y: auto;
+        max-width: 100vw;
+        box-sizing: border-box;
     }
 
     .genre-cards {
@@ -778,6 +787,61 @@ body {
     .relatable-metric .emoji {
         font-size: 1.5rem;
     }
+
+    /* Series grid single column on tablet */
+    .series-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .series-badge {
+        padding: 1.5rem 1rem;
+    }
+
+    /* Personality container single column on tablet */
+    .personality-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .personality-badge {
+        padding: 1.5rem 1rem;
+    }
+
+    /* Book showcase responsive on tablet */
+    .book-showcase {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .book-cover {
+        width: 160px;
+        height: 224px;
+    }
+
+    .book-spine {
+        width: 16px;
+    }
+
+    .book-front {
+        width: 145px;
+        height: 224px;
+        left: 12px;
+        padding: 1.25rem;
+    }
+
+    .book-title {
+        font-size: 1.4rem;
+    }
+
+    .book-details {
+        text-align: center;
+        max-width: 100%;
+    }
+
+    .book-meta {
+        justify-content: center;
+    }
 }
 
 @media (max-width: 480px) {
@@ -785,6 +849,7 @@ body {
         min-height: 100vh;
         height: auto;
         overflow-y: visible;
+        overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
         position: relative;
     }
@@ -797,13 +862,17 @@ body {
         pointer-events: auto !important;
         transition: none !important;
         animation: none !important;
+        overflow-x: hidden;
     }
 
     .slide-content {
-        padding: 50px 4px 20px;
+        padding: 60px 16px 30px;
         min-height: 100vh;
         height: auto;
         overflow-y: auto;
+        overflow-x: hidden;
+        max-width: 100vw;
+        box-sizing: border-box;
     }
 
     .genre-cards {
@@ -818,12 +887,23 @@ body {
     }
 
     .headline {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
         margin-bottom: 1.2rem;
+        word-wrap: break-word;
     }
 
     .subtitle {
-        font-size: 1.1rem;
+        font-size: 1rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin: 1.5rem 0;
+    }
+
+    .stat-card {
+        padding: 1rem 0.75rem;
     }
 
     .stat-number {
@@ -831,58 +911,151 @@ body {
     }
 
     .stat-label {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
     }
 
     .relatable-metric {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        padding: 0 8px;
     }
 
     .genre-title {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
     .genre-desc {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
     }
 
     .month-name {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
 
     .peak-stat .big-number {
-        font-size: 3rem;
+        font-size: 2.5rem;
+    }
+
+    .peak-description {
+        font-size: 0.9rem;
+        padding: 0 8px;
+    }
+
+    /* Book showcase responsive on small phones */
+    .book-showcase {
+        flex-direction: column;
+        gap: 1.5rem;
     }
 
     .book-cover {
-        width: 140px;
-        height: 196px;
+        width: 120px;
+        height: 168px;
+    }
+
+    .book-spine {
+        width: 14px;
     }
 
     .book-front {
-        width: 125px;
-        height: 196px;
-        padding: 1rem;
+        width: 106px;
+        height: 168px;
+        left: 10px;
+        padding: 0.75rem;
     }
 
     .book-title {
-        font-size: 1.3rem;
+        font-size: 1rem;
+    }
+
+    .book-author {
+        font-size: 0.75rem;
+    }
+
+    .book-details {
+        text-align: center;
+        max-width: 100%;
+    }
+
+    .book-meta {
+        justify-content: center;
+        gap: 1rem;
+        font-size: 0.9rem;
+        flex-wrap: wrap;
     }
 
     .personal-note {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        text-align: left;
+        border-left-width: 3px;
+        padding-left: 1rem;
     }
 
     .personality-type h2 {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
     }
 
     .location-name {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
     }
 
     .series-title {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
+    }
+
+    /* Series grid single column on mobile */
+    .series-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin: 2rem 0;
+    }
+
+    .series-badge {
+        padding: 1.25rem 0.75rem;
+    }
+
+    .badge-emoji {
+        font-size: 1.5rem;
+    }
+
+    .badge-label {
+        font-size: 0.75rem;
+    }
+
+    /* Personality container single column on mobile */
+    .personality-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .personality-badge {
+        padding: 1.25rem 0.75rem;
+    }
+
+    .badge-icon {
+        font-size: 2rem;
+    }
+
+    .location-icon {
+        font-size: 2rem;
+    }
+
+    .location-skyline {
+        height: 50px;
+        gap: 6px;
+    }
+
+    .castle {
+        width: 30px;
+        height: 40px;
+    }
+
+    .spire {
+        width: 12px;
+        height: 35px;
+    }
+
+    .building {
+        width: 20px;
+        height: 28px;
     }
 }
 

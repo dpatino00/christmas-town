@@ -482,7 +482,8 @@
             .then(response => response.text())
             .then(html => {
                 elements.secretReveal.innerHTML = html;
-                // Trigger overlay display
+                // Re-enable pointer events and trigger overlay display
+                elements.secretReveal.style.pointerEvents = 'auto';
                 elements.secretReveal.parentElement.style.display = 'flex';
 
                 // Move modal to body for proper centering
@@ -538,9 +539,13 @@
                         if (collection) {
                             htmx.remove(collection);
                         }
-                        // Also hide overlay
-                        if (elements.secretReveal && elements.secretReveal.parentElement) {
-                            elements.secretReveal.parentElement.style.display = 'none';
+                        // Clear and hide overlay
+                        if (elements.secretReveal) {
+                            elements.secretReveal.innerHTML = '';
+                            elements.secretReveal.style.pointerEvents = 'none';
+                            if (elements.secretReveal.parentElement) {
+                                elements.secretReveal.parentElement.style.display = 'none';
+                            }
                         }
                     };
                 }, 100);
@@ -1009,6 +1014,12 @@
     // ========================================
     function closeSecret() {
         elements.secretReveal.innerHTML = '';
+        // Disable pointer events on the reveal container itself
+        elements.secretReveal.style.pointerEvents = 'none';
+        // Ensure overlay layer is hidden to prevent blocking clicks
+        if (elements.secretReveal.parentElement) {
+            elements.secretReveal.parentElement.style.display = 'none';
+        }
     }
 
     // Fallback if htmx isn't available
@@ -1126,6 +1137,34 @@
     }
 
     function initEventListeners() {
+        // htmx event listener - show overlay when secret content is loaded
+        document.body.addEventListener('htmx:afterSwap', function (event) {
+            if (event.detail.target.id === 'secret-reveal') {
+                // Re-enable pointer events on the reveal container
+                elements.secretReveal.style.pointerEvents = 'auto';
+                // Show the overlay parent
+                elements.secretReveal.parentElement.style.display = 'flex';
+                
+                // Add event handlers to the loaded overlay
+                const overlay = elements.secretReveal.querySelector('.secret-message__overlay');
+                const closeButton = elements.secretReveal.querySelector('.secret-message__close');
+                
+                if (overlay) {
+                    // Close when clicking the overlay background (not the content)
+                    overlay.addEventListener('click', function(e) {
+                        if (e.target === overlay) {
+                            closeSecret();
+                        }
+                    });
+                }
+                
+                if (closeButton) {
+                    // Add click and keyboard handlers to close button
+                    addClickAndKeyListeners(closeButton, closeSecret);
+                }
+            }
+        });
+
         // Windows
         addClickAndKeyListeners(elements.windowMain, toggleMainWindow);
         addClickAndKeyListeners(elements.windowSide, toggleSideWindow);
@@ -1148,26 +1187,16 @@
         // Snowman
         elements.snowman?.addEventListener('click', waveToSnowman);
 
-        // Secret spot - handle both htmx and fallback
-        elements.secretSpot?.addEventListener('click', handleSecretClick);
-
-        // Also add keyboard support for secret spot
+        // Secret spot - handle both htmx and fallback (keyboard support included)
         addClickAndKeyListeners(elements.secretSpot, handleSecretClick);
 
         // Controls
         elements.snowToggle?.addEventListener('click', cycleSnowIntensity);
         elements.resetBtn?.addEventListener('click', resetScene);
 
-        // Close secret on escape or clicking overlay
+        // Close secret on escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeSecret();
-        });
-
-        // Close secret when clicking the overlay
-        elements.secretReveal?.addEventListener('click', (e) => {
-            if (e.target === elements.secretReveal) {
-                closeSecret();
-            }
         });
     }
 
@@ -1194,6 +1223,11 @@
         restoreState();
         initEventListeners();
         initSnow();
+
+        // Ensure secret-reveal starts with pointer-events disabled
+        if (elements.secretReveal) {
+            elements.secretReveal.style.pointerEvents = 'none';
+        }
 
         // Expose close function for htmx fragment
         window.closeSecret = closeSecret;

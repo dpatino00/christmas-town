@@ -1157,7 +1157,8 @@ body {
     border-bottom: none;
     border-radius: 4px 4px 0 0;
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transform-origin: left center;
+    transition: transform 0.4s ease;
 }
 
 .cabin__door:hover {
@@ -1209,11 +1210,6 @@ body {
 }
 
 /* Door opening animation */
-.cabin__door {
-    transform-origin: left center;
-    transition: transform 0.4s ease;
-}
-
 .cabin__door.door--open {
     transform: translateX(-50%) perspective(200px) rotateY(-50deg);
 }

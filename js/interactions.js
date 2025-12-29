@@ -48,7 +48,8 @@
         snowIntensity: 'medium', // light, medium, heavy
         catAdopted: false, // Track if cat has been adopted from gift
         northernLightsActive: false, // Track if Northern Lights are active
-        doorOpen: false // Track if door is open
+        doorOpen: false, // Track if door is open
+        doorKnocked: false // Track if door has been knocked/opened for discovery
     };
 
     let state = loadState();
@@ -237,6 +238,21 @@
         saveState();
     }
 
+    /**
+     * Builds and injects the cabin door interior scene the first time the door opens.
+     *
+     * This constructs a nested DOM structure representing a warmly lit interior with:
+     * - A glow layer (`.interior__glow`) behind the character
+     * - A greeting person (`.interior__person`) standing in the doorway
+     *   - Santa-style hat with pom (`.person__hat`, `.hat__pom`)
+     *   - Face (`.person__face`) containing eyes and a smile
+     *     - Eyes (`.person__eyes` with `.eye--left` and `.eye--right`)
+     *     - Smile (`.person__smile`)
+     *   - A speech bubble (`.person__bubble`) with a "Meow!" greeting
+     *
+     * The assembled `.cabin__interior` container is appended to `elements.door`
+     * so it appears behind the door panel when it is toggled open.
+     */
     function createDoorInterior() {
         const door = elements.door;
 
@@ -260,7 +276,10 @@
 
         // Create eyes
         const eyes = createStyledElement('div', 'person__eyes');
-        eyes.innerHTML = '<span class="eye eye--left"></span><span class="eye eye--right"></span>';
+        const leftEye = createStyledElement('span', 'eye eye--left');
+        const rightEye = createStyledElement('span', 'eye eye--right');
+        eyes.appendChild(leftEye);
+        eyes.appendChild(rightEye);
 
         // Create smile
         const smile = createStyledElement('div', 'person__smile');

@@ -47,7 +47,8 @@
         discoveries: 0,
         snowIntensity: 'medium', // light, medium, heavy
         catAdopted: false, // Track if cat has been adopted from gift
-        northernLightsActive: false // Track if Northern Lights are active
+        northernLightsActive: false, // Track if Northern Lights are active
+        doorOpen: false // Track if door is open
     };
 
     let state = loadState();
@@ -208,20 +209,75 @@
     // ========================================
     // Door Interaction
     // ========================================
-    function knockDoor() {
-        elements.door.style.transform = 'translateX(-50%) scale(0.98)';
-        setTimeout(() => {
-            elements.door.style.transform = 'translateX(-50%) scale(1.02)';
-            setTimeout(() => {
-                elements.door.style.transform = 'translateX(-50%)';
-            }, 100);
-        }, 100);
+    function toggleDoor() {
+        state.doorOpen = !state.doorOpen;
 
-        if (!state.doorKnocked) {
-            state.doorKnocked = true;
-            incrementDiscoveries();
-            saveState();
+        const door = elements.door;
+        const interior = door.querySelector('.cabin__interior');
+
+        if (state.doorOpen) {
+            door.classList.add('door--open');
+            door.setAttribute('aria-label', 'Close door');
+
+            // Create interior if it doesn't exist
+            if (!interior) {
+                createDoorInterior();
+            }
+
+            // First time opening counts as discovery
+            if (!state.doorKnocked) {
+                state.doorKnocked = true;
+                incrementDiscoveries();
+            }
+        } else {
+            door.classList.remove('door--open');
+            door.setAttribute('aria-label', 'Open door');
         }
+
+        saveState();
+    }
+
+    function createDoorInterior() {
+        const door = elements.door;
+
+        // Create interior container
+        const interior = createStyledElement('div', 'cabin__interior');
+
+        // Add warm glow effect
+        const glow = createStyledElement('div', 'interior__glow');
+        interior.appendChild(glow);
+
+        // Create person greeting
+        const person = createStyledElement('div', 'interior__person');
+
+        // Create santa hat
+        const hat = createStyledElement('div', 'person__hat');
+        const hatPom = createStyledElement('div', 'hat__pom');
+        hat.appendChild(hatPom);
+
+        // Create face
+        const face = createStyledElement('div', 'person__face');
+
+        // Create eyes
+        const eyes = createStyledElement('div', 'person__eyes');
+        eyes.innerHTML = '<span class="eye eye--left"></span><span class="eye eye--right"></span>';
+
+        // Create smile
+        const smile = createStyledElement('div', 'person__smile');
+
+        // Create speech bubble
+        const bubble = createStyledElement('div', 'person__bubble');
+        bubble.textContent = 'Meow!';
+
+        // Assemble person
+        face.appendChild(eyes);
+        face.appendChild(smile);
+        person.appendChild(hat);
+        person.appendChild(face);
+        person.appendChild(bubble);
+
+        interior.appendChild(person);
+        door.appendChild(interior);
     }
 
     // ========================================
@@ -1144,20 +1200,20 @@
                 elements.secretReveal.style.pointerEvents = 'auto';
                 // Show the overlay parent
                 elements.secretReveal.parentElement.style.display = 'flex';
-                
+
                 // Add event handlers to the loaded overlay
                 const overlay = elements.secretReveal.querySelector('.secret-message__overlay');
                 const closeButton = elements.secretReveal.querySelector('.secret-message__close');
-                
+
                 if (overlay) {
                     // Close when clicking the overlay background (not the content)
-                    overlay.addEventListener('click', function(e) {
+                    overlay.addEventListener('click', function (e) {
                         if (e.target === overlay) {
                             closeSecret();
                         }
                     });
                 }
-                
+
                 if (closeButton) {
                     // Add click and keyboard handlers to close button
                     addClickAndKeyListeners(closeButton, closeSecret);
@@ -1170,7 +1226,14 @@
         addClickAndKeyListeners(elements.windowSide, toggleSideWindow);
 
         // Door
-        addClickAndKeyListeners(elements.door, knockDoor);
+        addClickAndKeyListeners(elements.door, toggleDoor);
+
+        // Restore door state
+        if (state.doorOpen) {
+            elements.door.classList.add('door--open');
+            elements.door.setAttribute('aria-label', 'Close door');
+            createDoorInterior();
+        }
 
         // String lights
         addClickAndKeyListeners(elements.stringLights, toggleLights);

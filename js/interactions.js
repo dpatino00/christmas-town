@@ -47,7 +47,9 @@
         discoveries: 0,
         snowIntensity: 'medium', // light, medium, heavy
         catAdopted: false, // Track if cat has been adopted from gift
-        northernLightsActive: false // Track if Northern Lights are active
+        northernLightsActive: false, // Track if Northern Lights are active
+        doorOpen: false, // Track if door is open
+        doorKnocked: false // Track if door has been knocked/opened for discovery
     };
 
     let state = loadState();
@@ -208,20 +210,93 @@
     // ========================================
     // Door Interaction
     // ========================================
-    function knockDoor() {
-        elements.door.style.transform = 'translateX(-50%) scale(0.98)';
-        setTimeout(() => {
-            elements.door.style.transform = 'translateX(-50%) scale(1.02)';
-            setTimeout(() => {
-                elements.door.style.transform = 'translateX(-50%)';
-            }, 100);
-        }, 100);
+    function toggleDoor() {
+        state.doorOpen = !state.doorOpen;
 
-        if (!state.doorKnocked) {
-            state.doorKnocked = true;
-            incrementDiscoveries();
-            saveState();
+        const door = elements.door;
+        const interior = door.querySelector('.cabin__interior');
+
+        if (state.doorOpen) {
+            door.classList.add('door--open');
+            door.setAttribute('aria-label', 'Close door');
+
+            // Create interior if it doesn't exist
+            if (!interior) {
+                createDoorInterior();
+            }
+
+            // First time opening counts as discovery
+            if (!state.doorKnocked) {
+                state.doorKnocked = true;
+                incrementDiscoveries();
+            }
+        } else {
+            door.classList.remove('door--open');
+            door.setAttribute('aria-label', 'Open door');
         }
+
+        saveState();
+    }
+
+    /**
+     * Builds and injects the cabin door interior scene the first time the door opens.
+     *
+     * This constructs a nested DOM structure representing a warmly lit interior with:
+     * - A glow layer (`.interior__glow`) behind the character
+     * - A greeting person (`.interior__person`) standing in the doorway
+     *   - Santa-style hat with pom (`.person__hat`, `.hat__pom`)
+     *   - Face (`.person__face`) containing eyes and a smile
+     *     - Eyes (`.person__eyes` with `.eye--left` and `.eye--right`)
+     *     - Smile (`.person__smile`)
+     *   - A speech bubble (`.person__bubble`) with a "Meow!" greeting
+     *
+     * The assembled `.cabin__interior` container is appended to `elements.door`
+     * so it appears behind the door panel when it is toggled open.
+     */
+    function createDoorInterior() {
+        const door = elements.door;
+
+        // Create interior container
+        const interior = createStyledElement('div', 'cabin__interior');
+
+        // Add warm glow effect
+        const glow = createStyledElement('div', 'interior__glow');
+        interior.appendChild(glow);
+
+        // Create person greeting
+        const person = createStyledElement('div', 'interior__person');
+
+        // Create santa hat
+        const hat = createStyledElement('div', 'person__hat');
+        const hatPom = createStyledElement('div', 'hat__pom');
+        hat.appendChild(hatPom);
+
+        // Create face
+        const face = createStyledElement('div', 'person__face');
+
+        // Create eyes
+        const eyes = createStyledElement('div', 'person__eyes');
+        const leftEye = createStyledElement('span', 'eye eye--left');
+        const rightEye = createStyledElement('span', 'eye eye--right');
+        eyes.appendChild(leftEye);
+        eyes.appendChild(rightEye);
+
+        // Create smile
+        const smile = createStyledElement('div', 'person__smile');
+
+        // Create speech bubble
+        const bubble = createStyledElement('div', 'person__bubble');
+        bubble.textContent = 'Meow!';
+
+        // Assemble person
+        face.appendChild(eyes);
+        face.appendChild(smile);
+        person.appendChild(hat);
+        person.appendChild(face);
+        person.appendChild(bubble);
+
+        interior.appendChild(person);
+        door.appendChild(interior);
     }
 
     // ========================================
@@ -1144,20 +1219,20 @@
                 elements.secretReveal.style.pointerEvents = 'auto';
                 // Show the overlay parent
                 elements.secretReveal.parentElement.style.display = 'flex';
-                
+
                 // Add event handlers to the loaded overlay
                 const overlay = elements.secretReveal.querySelector('.secret-message__overlay');
                 const closeButton = elements.secretReveal.querySelector('.secret-message__close');
-                
+
                 if (overlay) {
                     // Close when clicking the overlay background (not the content)
-                    overlay.addEventListener('click', function(e) {
+                    overlay.addEventListener('click', function (e) {
                         if (e.target === overlay) {
                             closeSecret();
                         }
                     });
                 }
-                
+
                 if (closeButton) {
                     // Add click and keyboard handlers to close button
                     addClickAndKeyListeners(closeButton, closeSecret);
@@ -1170,7 +1245,14 @@
         addClickAndKeyListeners(elements.windowSide, toggleSideWindow);
 
         // Door
-        addClickAndKeyListeners(elements.door, knockDoor);
+        addClickAndKeyListeners(elements.door, toggleDoor);
+
+        // Restore door state
+        if (state.doorOpen) {
+            elements.door.classList.add('door--open');
+            elements.door.setAttribute('aria-label', 'Close door');
+            createDoorInterior();
+        }
 
         // String lights
         addClickAndKeyListeners(elements.stringLights, toggleLights);

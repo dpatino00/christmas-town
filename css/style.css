@@ -947,9 +947,107 @@ body {
     transition: opacity 0.5s ease;
 }
 
+/* Frost overlay */
+.cabin__window-frost {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(ellipse at 20% 30%, rgba(255, 255, 255, 0.5) 0%, transparent 30%),
+        radial-gradient(ellipse at 80% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 25%),
+        radial-gradient(ellipse at 40% 70%, rgba(255, 255, 255, 0.45) 0%, transparent 28%),
+        radial-gradient(ellipse at 90% 80%, rgba(255, 255, 255, 0.4) 0%, transparent 22%),
+        radial-gradient(ellipse at 15% 85%, rgba(255, 255, 255, 0.45) 0%, transparent 25%),
+        radial-gradient(ellipse at 60% 50%, rgba(255, 255, 255, 0.35) 0%, transparent 20%),
+        radial-gradient(ellipse at 10% 50%, rgba(240, 245, 255, 0.3) 0%, transparent 35%),
+        radial-gradient(ellipse at 70% 15%, rgba(240, 245, 255, 0.35) 0%, transparent 30%),
+        linear-gradient(135deg, rgba(200, 220, 255, 0.7) 0%, rgba(230, 240, 255, 0.5) 50%, rgba(200, 220, 255, 0.6) 100%);
+    opacity: 1;
+    pointer-events: none;
+    z-index: 3;
+    transition: opacity 2.5s ease;
+    filter: blur(1px);
+}
+
 .cabin__window.lit .cabin__window-glow {
     opacity: 1;
     animation: flicker 4s ease-in-out infinite;
+}
+
+/* Frost melting stages - organic fade */
+.warm-1 .cabin__window-frost {
+    opacity: 0.7;
+    filter: blur(1.5px);
+}
+
+.warm-2 .cabin__window-frost {
+    opacity: 0.45;
+    filter: blur(2px);
+}
+
+.warm-3 .cabin__window-frost {
+    opacity: 0.2;
+    filter: blur(2.5px);
+}
+
+.warm-4 .cabin__window-frost {
+    opacity: 0;
+    filter: blur(3px);
+}
+
+/* Icicles on windows */
+.cabin__window::before,
+.cabin__window::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    width: 0;
+    height: 0;
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-top: 20px solid rgba(200, 220, 255, 0.8);
+    opacity: 1;
+    pointer-events: none;
+    z-index: 4;
+    filter: drop-shadow(0 2px 3px rgba(150, 180, 220, 0.5));
+    transition: opacity 1.5s ease, transform 1.5s ease;
+}
+
+.cabin__window::before {
+    left: 25%;
+    border-top-width: 18px;
+}
+
+.cabin__window::after {
+    right: 20%;
+    border-top-width: 22px;
+}
+
+/* Icicles disappear as warmth increases */
+.warm-1 .cabin__window::before,
+.warm-1 .cabin__window::after {
+    opacity: 0.8;
+    transform: scaleY(0.9);
+}
+
+.warm-2 .cabin__window::before,
+.warm-2 .cabin__window::after {
+    opacity: 0.5;
+    transform: scaleY(0.7);
+}
+
+.warm-3 .cabin__window::before,
+.warm-3 .cabin__window::after {
+    opacity: 0.2;
+    transform: scaleY(0.4);
+}
+
+.warm-4 .cabin__window::before,
+.warm-4 .cabin__window::after {
+    opacity: 0;
+    transform: scaleY(0.1);
 }
 
 @keyframes flicker {
@@ -1059,7 +1157,8 @@ body {
     border-bottom: none;
     border-radius: 4px 4px 0 0;
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transform-origin: left center;
+    transition: transform 0.4s ease;
 }
 
 .cabin__door:hover {
@@ -1108,6 +1207,215 @@ body {
     height: 10px;
     background: #cc2222;
     border-radius: 2px;
+}
+
+/* Door opening animation */
+.cabin__door.door--open {
+    transform: translateX(-50%) perspective(200px) rotateY(-50deg);
+}
+
+/* Interior visible when door opens */
+.cabin__interior {
+    position: absolute;
+    top: 0;
+    left: -5px;
+    width: 30px;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    overflow: visible;
+}
+
+.cabin__door.door--open .cabin__interior {
+    opacity: 1;
+}
+
+/* Warm glow from interior */
+.interior__glow {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    width: 100px;
+    height: 100%;
+    background: radial-gradient(ellipse at 0% 50%,
+            rgba(255, 200, 100, 0.4) 0%,
+            rgba(255, 170, 68, 0.2) 30%,
+            transparent 60%);
+    filter: blur(10px);
+    pointer-events: none;
+}
+
+/* Person peeking around edge of door */
+.interior__person {
+    position: absolute;
+    top: 12%;
+    left: 150%;
+    width: 24px;
+    height: 32px;
+    animation: person-peek 0.5s ease-out forwards;
+    transform-origin: right center;
+}
+
+@keyframes person-peek {
+    0% {
+        transform: translateX(-30px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Santa hat */
+.person__hat {
+    position: absolute;
+    top: -15%;
+    left: 20%;
+    transform: rotate(10deg);
+    width: 0;
+    height: 0;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-bottom: 13px solid #cc2222;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
+    z-index: 2;
+}
+
+.hat__pom {
+    position: absolute;
+    top: -2px;
+    left: 0;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.person__hat::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: -9px;
+    width: 18px;
+    height: 3px;
+    background: white;
+    border-radius: 1px;
+}
+
+/* Face - tilted to peek around */
+.person__face {
+    position: relative;
+    width: 18px;
+    height: 22px;
+    background: #f4c2a0;
+    border-radius: 45% 45% 50% 50%;
+    margin: 7px auto 0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    transform: rotate(10deg);
+    z-index: 1;
+}
+
+/* Eyes */
+.person__eyes {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 11px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.eye {
+    width: 2.5px;
+    height: 2.5px;
+    background: #2a1a10;
+    border-radius: 50%;
+    animation: blink 3s ease-in-out infinite;
+}
+
+@keyframes blink {
+
+    0%,
+    48%,
+    52%,
+    100% {
+        transform: scaleY(1);
+    }
+
+    50% {
+        transform: scaleY(0.1);
+    }
+}
+
+/* Smile */
+.person__smile {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 9px;
+    height: 5px;
+    border: 1.5px solid #2a1a10;
+    border-top: none;
+    border-radius: 0 0 9px 9px;
+}
+
+/* Speech bubble */
+.person__bubble {
+    position: absolute;
+    top: 0;
+    right: -50px;
+    background: white;
+    color: #2a1a10;
+    padding: 3px 6px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: bold;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    animation: bubble-appear 0.3s ease-out 0.5s backwards, bubble-float 2s ease-in-out 0.8s infinite;
+}
+
+.person__bubble::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -3px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-right: 4px solid white;
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+}
+
+@keyframes bubble-appear {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes bubble-float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-2px);
+    }
 }
 
 /* ========================================
